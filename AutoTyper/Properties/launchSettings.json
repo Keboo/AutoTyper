@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "AutoTyper": {
+      "commandName": "Project"
+    },
+    "Display Help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}

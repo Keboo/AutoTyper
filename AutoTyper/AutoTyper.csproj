@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Version>0.0.1</Version>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- 
+    For packaging as a dotnet global tool 
+    https://learn.microsoft.com/dotnet/core/tools/global-tools-how-to-create
+  -->
+  <PropertyGroup>
+    <PackageId>AutoTyper</PackageId>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>AutoTyper</ToolCommandName>
+  </PropertyGroup>
+  
+
+  <ItemGroup>
+    <PackageReference Include="Henooh.DeviceEmulator">
+      <NoWarn>NU1701</NoWarn>
+    </PackageReference>
+    <PackageReference Include="PInvoke.User32" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="TextCopy" />
+  </ItemGroup>
+
+</Project>
