@@ -18,7 +18,21 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>AutoTyper</ToolCommandName>
   </PropertyGroup>
-  
+
+  <!--https://github.com/dotnet/sdk/issues/12055#issuecomment-2126355866-->
+  <Target Name="HackBeforePackToolValidation" BeforeTargets="_PackToolValidation">
+    <PropertyGroup>
+      <TargetPlatformIdentifier></TargetPlatformIdentifier>
+      <TargetPlatformMoniker></TargetPlatformMoniker>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="HackAfterPackToolValidation" AfterTargets="_PackToolValidation" BeforeTargets="PackTool">
+    <PropertyGroup>
+      <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    </PropertyGroup>
+  </Target>
+
 
   <ItemGroup>
     <PackageReference Include="Henooh.DeviceEmulator">

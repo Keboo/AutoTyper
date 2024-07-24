@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Runtime.InteropServices;
 
 using PInvoke;
 
@@ -47,6 +48,12 @@ public sealed class Program
         };
         rootCommand.SetAction(async (ParseResult parseResult, CancellationToken token) =>
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.Error.WriteLine("This app only works on Windows");
+                return;
+            }
+
             double? delayValue = parseResult.CommandResult.GetValue(delay);
             string? contentValue = parseResult.CommandResult.GetValue(content);
             bool verboseValue = parseResult.CommandResult.GetValue(verbose);
