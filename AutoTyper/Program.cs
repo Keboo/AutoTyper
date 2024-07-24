@@ -67,6 +67,7 @@ public sealed class Program
             IntPtr activeWindow = GetForegroundWindow();
             string windowText = GetWindowText(activeWindow);
 
+            //TODO: Replace this with direct calls and remove the library
             Henooh.DeviceEmulator.KeyboardController kc = new(token);
             if (parseResult.CommandResult.GetValue(fastTyping))
             {
