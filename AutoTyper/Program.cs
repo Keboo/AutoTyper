@@ -30,6 +30,14 @@ public sealed class Program
         {
             Description = "Appends a new line (Enter) key at the end of the content"
         };
+        CliOption<bool> verbose = new("--verbose", "-v")
+        {
+            Description = "Prints additional information to the console"
+        };
+        CliOption<bool> fastTyping = new("--fast-typing", "-f")
+        {
+            Description = "Removes the delay between key strokes"
+        };
 
         CliRootCommand rootCommand = new("A simple app to type int he contents of your clipboard")
         {
@@ -41,7 +49,8 @@ public sealed class Program
         {
             double? delayValue = parseResult.CommandResult.GetValue(delay);
             string? contentValue = parseResult.CommandResult.GetValue(content);
-            
+            bool verboseValue = parseResult.CommandResult.GetValue(verbose);
+
             if (delayValue is not null)
             {
                 Console.WriteLine($"Waiting {delayValue.Value} seconds before typing...");
@@ -59,7 +68,10 @@ public sealed class Program
             string windowText = GetWindowText(activeWindow);
 
             Henooh.DeviceEmulator.KeyboardController kc = new(token);
-            //TODO: Add support for KeyboardController.NaturalTypingFlag
+            if (parseResult.CommandResult.GetValue(fastTyping))
+            {
+                kc.NaturalTypingFlag = false;
+            }
             kc.TypeString(text);
 
             if (parseResult.CommandResult.GetValue(addNewLine))
@@ -67,7 +79,14 @@ public sealed class Program
                 kc.Type(Henooh.DeviceEmulator.Native.VirtualKeyCode.RETURN);
             }
 
-            Console.WriteLine($"Sent '{text}' to {windowText}");
+            if (verboseValue)
+            {
+                Console.WriteLine($"Sent '{text}' to {windowText}");
+            }
+            else
+            {
+                Console.WriteLine($"Sent text to {windowText}");
+            }
         });
         
         return new CliConfiguration(rootCommand);
