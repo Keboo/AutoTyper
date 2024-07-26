@@ -44,7 +44,9 @@ public sealed class Program
         {
             delay,
             content,
-            addNewLine
+            addNewLine,
+            verbose,
+            fastTyping
         };
         rootCommand.SetAction(async (ParseResult parseResult, CancellationToken token) =>
         {
