@@ -1,8 +1,6 @@
 ﻿using System.CommandLine;
 using System.Runtime.InteropServices;
 
-using PInvoke;
-
 using TextCopy;
 
 using static PInvoke.User32;
@@ -60,17 +58,17 @@ public sealed class Program
             string? contentValue = parseResult.CommandResult.GetValue(content);
             bool verboseValue = parseResult.CommandResult.GetValue(verbose);
 
-            if (delayValue is not null)
-            {
-                Console.WriteLine($"Waiting {delayValue.Value} seconds before typing...");
-                await Task.Delay(TimeSpan.FromSeconds(delayValue.Value), token);
-            }
-
             string? text = contentValue ?? await ClipboardService.GetTextAsync(token);
             if (string.IsNullOrWhiteSpace(text))
             {
                 Console.Error.WriteLine("Did not find any text to type");
                 return;
+            }
+
+            if (delayValue is not null)
+            {
+                Console.WriteLine($"Waiting {delayValue.Value} seconds before typing...");
+                await Task.Delay(TimeSpan.FromSeconds(delayValue.Value), token);
             }
 
             IntPtr activeWindow = GetForegroundWindow();
