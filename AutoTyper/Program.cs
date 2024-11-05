@@ -19,7 +19,8 @@ public sealed class Program
     {
         CliOption<double> delay = new("--delay", "-d")
         {
-            Description = "The amount of time (in seconds) to wait before reading the clipboard and typing"
+            Description = "The amount of time (in seconds) to wait before reading the clipboard and typing",
+            DefaultValueFactory = _ => 3.0
         };
         CliOption<string> content = new("--content", "-c")
         {
