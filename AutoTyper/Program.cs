@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Runtime.InteropServices;
 
 using TextCopy;
@@ -11,35 +12,33 @@ public sealed class Program
 {
     private static Task<int> Main(string[] args)
     {
-        CliConfiguration configuration = GetConfiguration();
-        return configuration.InvokeAsync(args);
+        return GetRootCommand().InvokeAsync(args);
     }
 
-    public static CliConfiguration GetConfiguration()
+    public static RootCommand GetRootCommand()
     {
-        CliOption<double> delay = new("--delay", "-d")
+        Option<double> delay = new(["--delay", "-d"], () => 3.0)
         {
             Description = "The amount of time (in seconds) to wait before reading the clipboard and typing",
-            DefaultValueFactory = _ => 3.0
         };
-        CliOption<string> content = new("--content", "-c")
+        Option<string> content = new("--content", "-c")
         {
             Description = "The content to type rather than using the clipboard"
         };
-        CliOption<bool> addNewLine = new("--append-new-line", "-n")
+        Option<bool> addNewLine = new("--append-new-line", "-n")
         {
             Description = "Appends a new line (Enter) key at the end of the content"
         };
-        CliOption<bool> verbose = new("--verbose", "-v")
+        Option<bool> verbose = new("--verbose", "-v")
         {
             Description = "Prints additional information to the console"
         };
-        CliOption<bool> fastTyping = new("--fast-typing", "-f")
+        Option<bool> fastTyping = new("--fast-typing", "-f")
         {
             Description = "Removes the delay between key strokes"
         };
 
-        CliRootCommand rootCommand = new("A simple app to type int he contents of your clipboard")
+        RootCommand rootCommand = new("A simple app to type int he contents of your clipboard")
         {
             delay,
             content,
@@ -47,7 +46,8 @@ public sealed class Program
             verbose,
             fastTyping
         };
-        rootCommand.SetAction(async (ParseResult parseResult, CancellationToken token) =>
+
+        rootCommand.SetHandler(async (InvocationContext invocationContext) =>
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -55,9 +55,11 @@ public sealed class Program
                 return;
             }
 
-            double? delayValue = parseResult.CommandResult.GetValue(delay);
-            string? contentValue = parseResult.CommandResult.GetValue(content);
-            bool verboseValue = parseResult.CommandResult.GetValue(verbose);
+            double? delayValue = invocationContext.ParseResult.GetValueForOption(delay);
+            string? contentValue = invocationContext.ParseResult.GetValueForOption(content);
+            bool verboseValue = invocationContext.ParseResult.GetValueForOption(verbose);
+
+            CancellationToken token = invocationContext.GetCancellationToken();
 
             string? text = contentValue ?? await ClipboardService.GetTextAsync(token);
             if (string.IsNullOrWhiteSpace(text))
@@ -77,13 +79,13 @@ public sealed class Program
 
             //TODO: Replace this with direct calls and remove the library
             Henooh.DeviceEmulator.KeyboardController kc = new(token);
-            if (parseResult.CommandResult.GetValue(fastTyping))
+            if (invocationContext.ParseResult.GetValueForOption(fastTyping))
             {
                 kc.NaturalTypingFlag = false;
             }
             kc.TypeString(text);
 
-            if (parseResult.CommandResult.GetValue(addNewLine))
+            if (invocationContext.ParseResult.GetValueForOption(addNewLine))
             {
                 kc.Type(Henooh.DeviceEmulator.Native.VirtualKeyCode.RETURN);
             }
@@ -98,6 +100,6 @@ public sealed class Program
             }
         });
         
-        return new CliConfiguration(rootCommand);
+        return rootCommand;
     }
 }
