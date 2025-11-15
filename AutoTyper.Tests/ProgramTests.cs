@@ -16,8 +16,9 @@ public class ProgramTests
 
     private static Task<int> Invoke(string commandLine, StringWriter console)
     {
-        CliConfiguration configuration = Program.GetConfiguration();
-        configuration.Output = console;
-        return configuration.InvokeAsync(commandLine);
+        RootCommand rootCommand = Program.GetRootCommand();
+        ParseResult parseResult = rootCommand.Parse(commandLine);
+        parseResult.InvocationConfiguration.Output = console;
+        return parseResult.InvokeAsync();
     }
 }
