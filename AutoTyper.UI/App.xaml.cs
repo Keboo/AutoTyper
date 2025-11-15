@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
 using System.Windows.Threading;
+using AutoTyper.UI.Services;
 
 namespace AutoTyper.UI;
 
@@ -39,12 +40,19 @@ public partial class App : Application
             => configurationBuilder.AddUserSecrets(typeof(App).Assembly))
         .ConfigureServices((hostContext, services) =>
         {
+            // Windows and ViewModels
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
 
+            // Services
+            services.AddSingleton<SnippetStorageService>();
+            services.AddSingleton<TypingService>();
+
+            // Messaging
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
+            // Infrastructure
             services.AddSingleton(_ => Current.Dispatcher);
 
             services.AddTransient<ISnackbarMessageQueue>(provider =>

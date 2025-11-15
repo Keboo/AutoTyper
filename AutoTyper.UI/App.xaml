@@ -7,13 +7,16 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <materialDesign:BundledTheme BaseTheme="Inherit" 
-                                     PrimaryColor="Purple" 
-                                     SecondaryColor="LightGreen" />
+                                     PrimaryColor="BlueGrey" 
+                                     SecondaryColor="LightGreen"
+                                     ColorAdjustment="{materialDesign:ColorAdjustment}"/>
 
         <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
 
       </ResourceDictionary.MergedDictionaries>
+
+      <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </ResourceDictionary>
   </Application.Resources>
 </Application>

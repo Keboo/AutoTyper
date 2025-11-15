@@ -1,3 +1,6 @@
+using AutoTyper.UI.Models;
+using AutoTyper.UI.Services;
+
 namespace AutoTyper.UI.Tests;
 
 //This attribute generates tests for MainWindowViewModel that
@@ -6,59 +9,89 @@ namespace AutoTyper.UI.Tests;
 public partial class MainWindowViewModelTests
 {
     [Fact]
-    public void IncrementCounterCommand_Execute_IncrementsCount()
+    public async Task AddSnippetCommand_AddsSnippetToCollection()
     {
         //Arrange
         AutoMocker mocker = new();
+        mocker.GetMock<SnippetStorageService>()
+            .Setup(x => x.LoadSnippetsAsync())
+            .ReturnsAsync(new List<Snippet>());
 
         MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
+        
+        // Wait for initialization
+        await Task.Delay(100);
 
-        int initialCount = viewModel.Count;
+        int initialCount = viewModel.Snippets.Count;
 
-        //Act
-        viewModel.IncrementCountCommand.Execute(null);
+        Snippet testSnippet = new()
+        {
+            Name = "Test",
+            Content = "Test content",
+            Delay = 1.0,
+            FastTyping = false
+        };
 
-        //Assert
-        Assert.Equal(initialCount + 1, viewModel.Count);
-    }
-
-    [Theory]
-    [InlineData(0, true)]
-    [InlineData(1, true)]
-    [InlineData(2, true)]
-    [InlineData(3, true)]
-    [InlineData(4, true)]
-    [InlineData(5, false)]
-    [InlineData(6, false)]
-    public void IncrementCounterCommand_CanExecute_IndicatesIfCountIsLessThanFive(int count, bool expected)
-    {
-        //Arrange
-        AutoMocker mocker = new();
-
-        MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
-
-        viewModel.Count = count;
-
-        //Act
-        bool canExecute = viewModel.IncrementCountCommand.CanExecute(null);
+        viewModel.Snippets.Add(testSnippet);
 
         //Assert
-        Assert.Equal(expected, canExecute);
+        Assert.Equal(initialCount + 1, viewModel.Snippets.Count);
+        Assert.Contains(testSnippet, viewModel.Snippets);
     }
 
     [Fact]
-    public void ClearCounterCommand_Execute_ClearsCount()
+    public async Task DeleteSnippetCommand_RemovesSnippetFromCollection()
     {
         //Arrange
         AutoMocker mocker = new();
+        Snippet testSnippet = new()
+        {
+            Name = "Test",
+            Content = "Test content",
+            Delay = 1.0,
+            FastTyping = false
+        };
+
+        mocker.GetMock<SnippetStorageService>()
+            .Setup(x => x.LoadSnippetsAsync())
+            .ReturnsAsync(new List<Snippet> { testSnippet });
 
         MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
-        viewModel.Count = 42;
+
+        // Wait for initialization
+        await Task.Delay(100);
+
+        int initialCount = viewModel.Snippets.Count;
 
         //Act
-        viewModel.ClearCountCommand.Execute(null);
+        await viewModel.DeleteSnippetCommand.ExecuteAsync(testSnippet);
 
         //Assert
-        Assert.Equal(0, viewModel.Count);
+        Assert.Equal(initialCount - 1, viewModel.Snippets.Count);
+        Assert.DoesNotContain(testSnippet, viewModel.Snippets);
+    }
+
+    [Fact]
+    public async Task IsTopMost_PropertyChanges_UpdatesValue()
+    {
+        //Arrange
+        AutoMocker mocker = new();
+        mocker.GetMock<SnippetStorageService>()
+            .Setup(x => x.LoadSnippetsAsync())
+            .ReturnsAsync(new List<Snippet>());
+
+        MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
+
+        //Act
+        viewModel.IsTopMost = true;
+
+        //Assert
+        Assert.True(viewModel.IsTopMost);
+
+        //Act
+        viewModel.IsTopMost = false;
+
+        //Assert
+        Assert.False(viewModel.IsTopMost);
     }
 }
