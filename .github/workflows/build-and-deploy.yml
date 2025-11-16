@@ -67,7 +67,7 @@ jobs:
           path: ./NuGet
 
       - name: Restore Tools
-        run: dotnet tool restore
+          run: dotnet tool restore
 
       - name: Publish UI App
         run: dotnet publish AutoTyper.UI\AutoTyper.UI.csproj -c Release --self-contained -r win-x64 -o .\publish
