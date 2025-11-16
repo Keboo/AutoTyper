@@ -27,7 +27,7 @@ public class SnippetStorageService
         }
     }
 
-    public async Task<List<Snippet>> LoadSnippetsAsync()
+    public virtual async Task<List<Snippet>> LoadSnippetsAsync()
     {
         if (!File.Exists(SnippetsFilePath))
         {
@@ -48,7 +48,7 @@ public class SnippetStorageService
         }
     }
 
-    public async Task SaveSnippetsAsync(params IEnumerable<Snippet> snippets)
+    public virtual async Task SaveSnippetsAsync(params IEnumerable<Snippet> snippets)
     {
         try
         {

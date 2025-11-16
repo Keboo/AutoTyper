@@ -39,8 +39,8 @@ public partial class MainWindowViewModel : ObservableObject
         SnippetStorageService storageService,
         TypingService typingService)
     {
-        _storageService = storageService;
-        _typingService = typingService;
+        _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
+        _typingService = typingService ?? throw new ArgumentNullException(nameof(typingService));
 
         // Load snippets on startup
         _ = LoadSnippetsAsync();
