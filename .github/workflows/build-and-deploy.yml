@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        default: '1.0.0'
 
 defaults:
   run:
@@ -60,6 +65,20 @@ jobs:
         with:
           name: NuGet
           path: ./NuGet
+
+      - name: Restore Tools
+        run: dotnet tool restore
+
+      - name: Publish UI App
+        run: dotnet publish AutoTyper.UI\AutoTyper.UI.csproj -c Release --self-contained -r win-x64 -o .\publish
+
+      - name: vpk pack
+        if: github.event_name == 'workflow_dispatch'
+        run: dotnet vpk pack --packId Keboo.AutoTyper --packVersion ${{ inputs.version }} --packDir .\publish --mainExe AutoTyper.UI.exe
+
+      - name: Push Release
+        if: github.event_name == 'workflow_dispatch'
+        run: dotnet vpk publish -o .\publish --waitForLive --api-key ${{ secrets.VPK_API_KEY }}
 
   automerge:
     if: ${{ github.event_name == 'pull_request' }}
