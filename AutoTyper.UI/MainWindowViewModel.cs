@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
 
 using AutoTyper.UI.Models;
@@ -22,9 +22,13 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly SnippetStorageService _storageService;
     private readonly TypingService _typingService;
+    private readonly ThemeService _themeService;
 
     [ObservableProperty]
     private bool _isTopMost;
+
+    [ObservableProperty]
+    private bool _isDarkMode;
 
     public ObservableCollection<Snippet> Snippets { get; } = [];
 
@@ -37,11 +41,16 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel(
         SnippetStorageService storageService,
-        TypingService typingService)
+        TypingService typingService,
+        ThemeService themeService)
     {
-        _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
-        _typingService = typingService ?? throw new ArgumentNullException(nameof(typingService));
+        _storageService = storageService;
+        _typingService = typingService;
+        _themeService = themeService;
 
+        // Initialize theme state
+        IsDarkMode = _themeService.IsDarkMode;
+        
         // Load snippets on startup
         _ = LoadSnippetsAsync();
     }
@@ -179,5 +188,13 @@ public partial class MainWindowViewModel : ObservableObject
             }
             await _storageService.SaveSnippetsAsync(Snippets);
         }
+    }
+
+    [RelayCommand]
+    private void ToggleTheme()
+    {
+        _themeService.ToggleTheme();
+        IsDarkMode = _themeService.IsDarkMode;
+        StatusMessage = $"Switched to {(IsDarkMode ? "dark" : "light")} mode";
     }
 }
