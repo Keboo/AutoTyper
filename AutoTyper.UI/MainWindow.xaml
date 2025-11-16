@@ -1,0 +1,279 @@
+﻿<Window x:Class="AutoTyper.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoTyper.UI"
+        xmlns:models="clr-namespace:AutoTyper.UI.Models"
+        xmlns:viewModels="clr-namespace:AutoTyper.UI.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel, IsDesignTimeCreatable=False}"
+        Style="{StaticResource MaterialDesignWindow}"
+        Title="AutoTyper - Snippet Manager" 
+        Height="600" 
+        Width="900"
+        Topmost="{Binding IsTopMost}">
+
+  <materialDesign:DialogHost Identifier="RootDialog"
+                             CloseOnClickAway="True">
+    <materialDesign:DialogHost.DialogContentTemplate>
+      <DataTemplate DataType="{x:Type viewModels:AddSnippetViewModel}">
+        <Grid Width="600" Margin="20">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <!-- Dialog Title -->
+          <TextBlock Grid.Row="0" 
+                          Text="Add snippet"
+                          Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                          Margin="0,0,0,20"/>
+
+          <!-- Name -->
+          <TextBox Grid.Row="1"
+                         materialDesign:HintAssist.Hint="Snippet Name"
+                         Text="{Binding Name}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Margin="0,0,0,15"/>
+
+          <!-- Content -->
+          <TextBox Grid.Row="3"
+                         materialDesign:HintAssist.Hint="Content to Type"
+                         Text="{Binding Content}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                   VerticalContentAlignment="Top"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         MaxHeight="200"
+                         Margin="0,0,0,15"/>
+
+          <!-- Delay -->
+          <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Delay (seconds):" VerticalAlignment="Center" Width="120"/>
+            <TextBox Text="{Binding Delay}" 
+                      Width="100"
+                      materialDesign:HintAssist.Hint="3.0"/>
+          </StackPanel>
+
+          <!-- Fast Typing -->
+          <CheckBox Grid.Row="5" 
+                          Content="Fast Typing (No delay between keystrokes)"
+                          IsChecked="{Binding FastTyping}"
+                          Margin="0,0,0,10"/>
+
+          <!-- Append New Line -->
+          <CheckBox Grid.Row="6" 
+                          Content="Append New Line (Press Enter after typing)"
+                          IsChecked="{Binding AppendNewLine}"
+                          Margin="0,0,0,20"/>
+
+          <!-- Buttons -->
+          <StackPanel Grid.Row="7" 
+                      Orientation="Horizontal" 
+                      HorizontalAlignment="Right">
+            <Button Content="CANCEL" 
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Width="100"
+                    Margin="0,0,10,0"/>
+            <Button Content="SAVE" 
+                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    CommandParameter="{x:Static local:DialogResult.Confirmed}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Width="100"/>
+          </StackPanel>
+        </Grid>
+      </DataTemplate>
+    </materialDesign:DialogHost.DialogContentTemplate>
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- Menu -->
+      <Menu Grid.Row="0">
+        <MenuItem Header="_File">
+          <MenuItem Header="_Add Snippet" 
+                              Command="{Binding AddSnippetCommand}"
+                              InputGestureText="Ctrl+N">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon Kind="Plus"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <Separator />
+          <MenuItem Header="E_xit" Command="{x:Static ApplicationCommands.Close}"/>
+        </MenuItem>
+        <MenuItem Header="_View">
+          <MenuItem Header="Always on _Top" 
+                              IsCheckable="True"
+                              IsChecked="{Binding IsTopMost}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon Kind="Pin"/>
+            </MenuItem.Icon>
+          </MenuItem>
+        </MenuItem>
+      </Menu>
+
+      <!-- Toolbar -->
+      <materialDesign:ColorZone Grid.Row="1" 
+                                      Mode="PrimaryMid" 
+                                      Padding="16,8"
+                                      materialDesign:ElevationAssist.Elevation="Dp2">
+        <DockPanel>
+          <Button Content="ADD SNIPPET" 
+                            Command="{Binding AddSnippetCommand}"
+                            Style="{StaticResource MaterialDesignPaperSecondaryButton}"
+                            DockPanel.Dock="Right"
+                            Margin="8,0,0,0">
+            <Button.CommandParameter>
+              <materialDesign:PackIcon Kind="Plus"/>
+            </Button.CommandParameter>
+          </Button>
+
+          <StackPanel Orientation="Horizontal">
+            <materialDesign:PackIcon Kind="CodeBraces" 
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,8,0"/>
+            <TextBlock Text="Code Snippets" 
+                        FontSize="18"
+                        FontWeight="Medium"
+                        VerticalAlignment="Center"/>
+          </StackPanel>
+        </DockPanel>
+      </materialDesign:ColorZone>
+
+      <!-- Snippet List -->
+      <ScrollViewer Grid.Row="2" 
+                         VerticalScrollBarVisibility="Auto"
+                         Margin="16">
+        <ItemsControl ItemsSource="{Binding Snippets}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type models:Snippet}">
+              <materialDesign:Card Margin="0,0,0,12"
+                                               Padding="0">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Clickable content area -->
+                  <Button Grid.Column="0"
+                          Height="Auto"
+                          Command="{Binding DataContext.ExecuteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                          CommandParameter="{Binding}"
+                          Style="{StaticResource MaterialDesignFlatButton}"
+                          HorizontalContentAlignment="Stretch"
+                          Padding="16">
+                    <Grid>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                      </Grid.RowDefinitions>
+
+                      <!-- Name -->
+                      <TextBlock Grid.Row="0"
+                                Text="{Binding Name}"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Margin="0,0,0,4"/>
+
+                      <!-- Content Preview -->
+                      <TextBlock Grid.Row="1"
+                                  Text="{Binding Content}"
+                                  TextWrapping="NoWrap"
+                                  TextTrimming="CharacterEllipsis"
+                                  Opacity="0.7"
+                                  Margin="0,0,0,8"/>
+
+                      <!-- Properties -->
+                      <StackPanel Grid.Row="2" Orientation="Horizontal">
+                        <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s delay'}"
+                                            Margin="0,0,8,0"
+                                            IconBackground="{DynamicResource PrimaryHueMidBrush}"
+                                            IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                          <materialDesign:Chip.Icon>
+                            <materialDesign:PackIcon Kind="ClockOutline"/>
+                          </materialDesign:Chip.Icon>
+                        </materialDesign:Chip>
+
+                        <materialDesign:Chip Content="Fast Typing"
+                                              Margin="0,0,8,0"
+                                              Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              IconBackground="{DynamicResource SecondaryHueMidBrush}"
+                                              IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
+                          <materialDesign:Chip.Icon>
+                            <materialDesign:PackIcon Kind="FlashOutline"/>
+                          </materialDesign:Chip.Icon>
+                        </materialDesign:Chip>
+
+                        <materialDesign:Chip Content="+ Enter"
+                                            Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                            IconBackground="{DynamicResource PrimaryHueLightBrush}"
+                                            IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                          <materialDesign:Chip.Icon>
+                            <materialDesign:PackIcon Kind="KeyboardReturn"/>
+                          </materialDesign:Chip.Icon>
+                        </materialDesign:Chip>
+                      </StackPanel>
+                    </Grid>
+                  </Button>
+
+                  <!-- Action Buttons -->
+                  <StackPanel Grid.Column="1" 
+                              Orientation="Horizontal"
+                              VerticalAlignment="Center"
+                              Margin="8">
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding DataContext.EditSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}"
+                            ToolTip="Edit Snippet">
+                      <materialDesign:PackIcon Kind="Pencil"/>
+                    </Button>
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding DataContext.DeleteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}"
+                            ToolTip="Delete Snippet">
+                      <materialDesign:PackIcon Kind="Delete"/>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+              </materialDesign:Card>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <!-- Status Bar -->
+      <materialDesign:ColorZone Grid.Row="3" 
+                                Mode="PrimaryLight" 
+                                Padding="16,8">
+        <DockPanel>
+          <materialDesign:PackIcon Kind="Information" 
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,8,0"/>
+          <TextBlock Text="{Binding StatusMessage}" 
+                              VerticalAlignment="Center"/>
+        </DockPanel>
+      </materialDesign:ColorZone>
+    </Grid>
+  </materialDesign:DialogHost>
+
+  <Window.InputBindings>
+    <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding AddSnippetCommand}"/>
+  </Window.InputBindings>
+</Window>

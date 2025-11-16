@@ -3,43 +3,41 @@ using System.Runtime.InteropServices;
 
 using TextCopy;
 
-using static PInvoke.User32;
-
 namespace AutoTyper;
 
-public sealed class Program
+public sealed partial class Program
 {
     private static Task<int> Main(string[] args)
     {
-        CliConfiguration configuration = GetConfiguration();
-        return configuration.InvokeAsync(args);
+        RootCommand rootCommand = GetRootCommand();
+        return rootCommand.Parse(args).InvokeAsync();
     }
 
-    public static CliConfiguration GetConfiguration()
+    public static RootCommand GetRootCommand()
     {
-        CliOption<double> delay = new("--delay", "-d")
+        Option<double> delay = new("--delay", "-d")
         {
             Description = "The amount of time (in seconds) to wait before reading the clipboard and typing",
             DefaultValueFactory = _ => 3.0
         };
-        CliOption<string> content = new("--content", "-c")
+        Option<string> content = new("--content", "-c")
         {
             Description = "The content to type rather than using the clipboard"
         };
-        CliOption<bool> addNewLine = new("--append-new-line", "-n")
+        Option<bool> addNewLine = new("--append-new-line", "-n")
         {
             Description = "Appends a new line (Enter) key at the end of the content"
         };
-        CliOption<bool> verbose = new("--verbose", "-v")
+        Option<bool> verbose = new("--verbose", "-v")
         {
             Description = "Prints additional information to the console"
         };
-        CliOption<bool> fastTyping = new("--fast-typing", "-f")
+        Option<bool> fastTyping = new("--fast-typing", "-f")
         {
             Description = "Removes the delay between key strokes"
         };
 
-        CliRootCommand rootCommand = new("A simple app to type int he contents of your clipboard")
+        RootCommand rootCommand = new("A simple app to type int he contents of your clipboard")
         {
             delay,
             content,
@@ -55,9 +53,9 @@ public sealed class Program
                 return;
             }
 
-            double? delayValue = parseResult.CommandResult.GetValue(delay);
-            string? contentValue = parseResult.CommandResult.GetValue(content);
-            bool verboseValue = parseResult.CommandResult.GetValue(verbose);
+            double? delayValue = parseResult.GetValue(delay);
+            string? contentValue = parseResult.GetValue(content);
+            bool verboseValue = parseResult.GetValue(verbose);
 
             string? text = contentValue ?? await ClipboardService.GetTextAsync(token);
             if (string.IsNullOrWhiteSpace(text))
@@ -72,18 +70,18 @@ public sealed class Program
                 await Task.Delay(TimeSpan.FromSeconds(delayValue.Value), token);
             }
 
-            IntPtr activeWindow = GetForegroundWindow();
+            IntPtr activeWindow = NativeMethods.GetForegroundWindow();
             string windowText = GetWindowText(activeWindow);
 
             //TODO: Replace this with direct calls and remove the library
             Henooh.DeviceEmulator.KeyboardController kc = new(token);
-            if (parseResult.CommandResult.GetValue(fastTyping))
+            if (parseResult.GetValue(fastTyping))
             {
                 kc.NaturalTypingFlag = false;
             }
             kc.TypeString(text);
 
-            if (parseResult.CommandResult.GetValue(addNewLine))
+            if (parseResult.GetValue(addNewLine))
             {
                 kc.Type(Henooh.DeviceEmulator.Native.VirtualKeyCode.RETURN);
             }
@@ -98,6 +96,34 @@ public sealed class Program
             }
         });
         
-        return new CliConfiguration(rootCommand);
+        return rootCommand;
+    }
+
+    private static string GetWindowText(IntPtr hwnd)
+    {
+        int length = NativeMethods.GetWindowTextLength(hwnd);
+        if (length == 0)
+        {
+            return string.Empty;
+        }
+
+        unsafe
+        {
+            char* buffer = stackalloc char[length + 1];
+            int copied = NativeMethods.GetWindowText(hwnd, buffer, length + 1);
+            return new string(buffer, 0, copied);
+        }
+    }
+
+    private static partial class NativeMethods
+    {
+        [LibraryImport("user32.dll", SetLastError = true)]
+        internal static partial IntPtr GetForegroundWindow();
+
+        [LibraryImport("user32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        internal static unsafe partial int GetWindowText(IntPtr hWnd, char* lpString, int nMaxCount);
+
+        [LibraryImport("user32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        internal static partial int GetWindowTextLength(IntPtr hWnd);
     }
 }
