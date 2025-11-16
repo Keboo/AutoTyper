@@ -74,7 +74,7 @@ jobs:
 
       - name: vpk pack
         if: github.event_name == 'workflow_dispatch'
-        run: dotnet   vpk pack --packId Keboo.AutoTyper --packVersion ${{ inputs.version }} --packDir .\publish --mainExe AutoTyper.UI.exe
+        run: dotnet vpk pack --packId Keboo.AutoTyper --packVersion ${{ inputs.version }} --packDir .\publish --mainExe AutoTyper.UI.exe
 
       - name: Push Release
         if: github.event_name == 'workflow_dispatch'
