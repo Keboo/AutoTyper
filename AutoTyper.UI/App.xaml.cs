@@ -1,11 +1,17 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.Windows;
+using System.Windows.Threading;
+
+using AutoTyper.UI.Services;
+
+using CommunityToolkit.Mvvm.Messaging;
+
 using MaterialDesignThemes.Wpf;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Windows;
-using System.Windows.Threading;
-using AutoTyper.UI.Services;
+
+using Velopack;
 
 namespace AutoTyper.UI;
 
@@ -17,6 +23,8 @@ public partial class App : Application
     [STAThread]
     private static void Main(string[] args)
     {
+        VelopackApp.Build().Run();
+        _ = CheckForUpdatesAsync();
         MainAsync(args).GetAwaiter().GetResult();
     }
 
@@ -61,4 +69,21 @@ public partial class App : Application
                 return new SnackbarMessageQueue(TimeSpan.FromSeconds(3.0), dispatcher);
             });
         });
+
+    private static async Task<bool> CheckForUpdatesAsync()
+    {
+        var mgr = new UpdateManager(new Velopack.Sources.VelopackFlowSource());
+
+        // check for new version
+        var newVersion = await mgr.CheckForUpdatesAsync();
+        if (newVersion is null)
+            return false; // no update available
+
+        // download new version
+        await mgr.DownloadUpdatesAsync(newVersion);
+
+        // install new version and restart app
+        mgr.ApplyUpdatesAndRestart(newVersion);
+        return true;
+    }
 }
