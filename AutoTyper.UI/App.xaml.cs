@@ -47,6 +47,7 @@ public partial class App : Application
             // Services
             services.AddSingleton<SnippetStorageService>();
             services.AddSingleton<TypingService>();
+            services.AddSingleton<ThemeService>();
 
             // Messaging
             services.AddSingleton<WeakReferenceMessenger>();
