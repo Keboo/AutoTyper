@@ -17,6 +17,10 @@ public partial class MainWindowViewModelTests
             .Setup(x => x.LoadSnippetsAsync())
             .ReturnsAsync(new List<Snippet>());
 
+        mocker.GetMock<ThemeService>()
+            .Setup(x => x.IsDarkMode)
+            .Returns(false);
+
         MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
         
         // Wait for initialization
@@ -56,6 +60,10 @@ public partial class MainWindowViewModelTests
             .Setup(x => x.LoadSnippetsAsync())
             .ReturnsAsync(new List<Snippet> { testSnippet });
 
+        mocker.GetMock<ThemeService>()
+            .Setup(x => x.IsDarkMode)
+            .Returns(false);
+
         MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
 
         // Wait for initialization
@@ -79,6 +87,10 @@ public partial class MainWindowViewModelTests
         mocker.GetMock<SnippetStorageService>()
             .Setup(x => x.LoadSnippetsAsync())
             .ReturnsAsync(new List<Snippet>());
+
+        mocker.GetMock<ThemeService>()
+            .Setup(x => x.IsDarkMode)
+            .Returns(false);
 
         MainWindowViewModel viewModel = mocker.CreateInstance<MainWindowViewModel>();
 
