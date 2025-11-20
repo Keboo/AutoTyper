@@ -125,6 +125,26 @@
               <materialDesign:PackIcon Kind="Pin"/>
             </MenuItem.Icon>
           </MenuItem>
+          <Separator/>
+          <MenuItem Header="_Full View" 
+                              IsCheckable="True"
+                              IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Full}}"
+                              Command="{Binding SetViewModeCommand}"
+                              CommandParameter="{x:Static local:ViewMode.Full}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon Kind="ViewList"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="_Compact View" 
+                              IsCheckable="True"
+                              IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Compact}}"
+                              Command="{Binding SetViewModeCommand}"
+                              CommandParameter="{x:Static local:ViewMode.Compact}">
+            <MenuItem.Icon>
+              <materialDesign:PackIcon Kind="ViewHeadline"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <Separator/>
           <MenuItem Header="_Dark Mode" 
                               IsCheckable="True"
                               IsChecked="{Binding IsDarkMode}"
@@ -211,51 +231,124 @@
                         <RowDefinition Height="Auto"/>
                       </Grid.RowDefinitions>
 
-                      <!-- Name -->
-                      <TextBlock Grid.Row="0"
-                                Text="{Binding Name}"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Margin="0,0,0,4"/>
+                      <!-- Full View Layout -->
+                      <Grid Grid.Row="0" Grid.RowSpan="3">
+                        <Grid.Style>
+                          <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                           Value="{x:Static local:ViewMode.Compact}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Grid.Style>
+                        
+                        <Grid.RowDefinitions>
+                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                      <!-- Content Preview -->
-                      <TextBlock Grid.Row="1"
-                                  Text="{Binding Content}"
-                                  TextWrapping="NoWrap"
-                                  TextTrimming="CharacterEllipsis"
-                                  Opacity="0.7"
-                                  Margin="0,0,0,8"/>
+                        <!-- Name -->
+                        <TextBlock Grid.Row="0"
+                                  Text="{Binding Name}"
+                                  FontSize="16"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,4"/>
 
-                      <!-- Properties -->
-                      <StackPanel Grid.Row="2" Orientation="Horizontal">
-                        <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s delay'}"
-                                            Margin="0,0,8,0"
-                                            IconBackground="{DynamicResource PrimaryHueMidBrush}"
-                                            IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
-                          <materialDesign:Chip.Icon>
-                            <materialDesign:PackIcon Kind="ClockOutline"/>
-                          </materialDesign:Chip.Icon>
-                        </materialDesign:Chip>
+                        <!-- Content Preview -->
+                        <TextBlock Grid.Row="1"
+                                    Text="{Binding Content}"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis"
+                                    Opacity="0.7"
+                                    Margin="0,0,0,8"/>
 
-                        <materialDesign:Chip Content="Fast Typing"
+                        <!-- Properties -->
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                          <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s delay'}"
                                               Margin="0,0,8,0"
-                                              Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              IconBackground="{DynamicResource SecondaryHueMidBrush}"
-                                              IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
-                          <materialDesign:Chip.Icon>
-                            <materialDesign:PackIcon Kind="FlashOutline"/>
-                          </materialDesign:Chip.Icon>
-                        </materialDesign:Chip>
+                                              IconBackground="{DynamicResource PrimaryHueMidBrush}"
+                                              IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="ClockOutline"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
 
-                        <materialDesign:Chip Content="+ Enter"
-                                            Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                            IconBackground="{DynamicResource PrimaryHueLightBrush}"
-                                            IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
-                          <materialDesign:Chip.Icon>
-                            <materialDesign:PackIcon Kind="KeyboardReturn"/>
-                          </materialDesign:Chip.Icon>
-                        </materialDesign:Chip>
-                      </StackPanel>
+                          <materialDesign:Chip Content="Fast Typing"
+                                                Margin="0,0,8,0"
+                                                Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                IconBackground="{DynamicResource SecondaryHueMidBrush}"
+                                                IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="FlashOutline"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
+
+                          <materialDesign:Chip Content="+ Enter"
+                                              Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              IconBackground="{DynamicResource PrimaryHueLightBrush}"
+                                              IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="KeyboardReturn"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
+                        </StackPanel>
+                      </Grid>
+
+                      <!-- Compact View Layout -->
+                      <DockPanel Grid.Row="0" Grid.RowSpan="3">
+                        <DockPanel.Style>
+                          <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                           Value="{x:Static local:ViewMode.Compact}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </DockPanel.Style>
+
+                        <!-- Chips on the right -->
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="16,0,0,0">
+                          <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s'}"
+                                              Margin="0,0,4,0"
+                                              IconBackground="{DynamicResource PrimaryHueMidBrush}"
+                                              IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="ClockOutline"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
+
+                          <materialDesign:Chip Content="Fast"
+                                                Margin="0,0,4,0"
+                                                Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                IconBackground="{DynamicResource SecondaryHueMidBrush}"
+                                                IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="FlashOutline"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
+
+                          <materialDesign:Chip Content="↵"
+                                              Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              IconBackground="{DynamicResource PrimaryHueLightBrush}"
+                                              IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                            <materialDesign:Chip.Icon>
+                              <materialDesign:PackIcon Kind="KeyboardReturn"/>
+                            </materialDesign:Chip.Icon>
+                          </materialDesign:Chip>
+                        </StackPanel>
+
+                        <!-- Name on the left -->
+                        <TextBlock Text="{Binding Name}"
+                                  FontSize="16"
+                                  FontWeight="SemiBold"
+                                  VerticalAlignment="Center"/>
+                      </DockPanel>
                     </Grid>
                   </Button>
 
