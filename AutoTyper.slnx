@@ -17,6 +17,7 @@
   </Folder>
   <Project Path="AutoTyper.Tests/AutoTyper.Tests.csproj" />
   <Project Path="AutoTyper/AutoTyper.csproj" />
+  <Project Path="AutoTyper.DeviceEmulator/AutoTyper.DeviceEmulator.csproj" />
   <Project Path="AutoTyper.UI/AutoTyper.UI.csproj" />
   <Project Path="AutoTyper.UI.Tests/AutoTyper.UI.Tests.csproj" />
 </Solution>
