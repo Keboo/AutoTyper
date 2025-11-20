@@ -7,6 +7,7 @@
         xmlns:models="clr-namespace:AutoTyper.UI.Models"
         xmlns:viewModels="clr-namespace:AutoTyper.UI.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:dd="urn:gong-wpf-dragdrop"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel, IsDesignTimeCreatable=False}"
         Style="{StaticResource MaterialDesignWindow}"
@@ -181,7 +182,10 @@
       <ScrollViewer Grid.Row="2" 
                          VerticalScrollBarVisibility="Auto"
                          Margin="16">
-        <ItemsControl ItemsSource="{Binding Snippets}">
+        <ItemsControl ItemsSource="{Binding Snippets}"
+                      dd:DragDrop.IsDragSource="True"
+                      dd:DragDrop.IsDropTarget="True"
+                      dd:DragDrop.DropHandler="{Binding}">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="{x:Type models:Snippet}">
               <materialDesign:Card Margin="0,0,0,12"

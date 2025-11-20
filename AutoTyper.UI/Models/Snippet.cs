@@ -18,4 +18,7 @@ public partial class Snippet : ObservableObject
 
     [ObservableProperty]
     private bool _appendNewLine;
+
+    [ObservableProperty]
+    private int _order;
 }

@@ -8,6 +8,8 @@ using AutoTyper.UI.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using GongSolutions.Wpf.DragDrop;
+
 using MaterialDesignThemes.Wpf;
 
 namespace AutoTyper.UI;
@@ -18,7 +20,7 @@ public enum DialogResult
     Confirmed,
 }
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
     private readonly SnippetStorageService _storageService;
     private readonly TypingService _typingService;
@@ -65,6 +67,16 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Snippets.Clear();
             List<Snippet> snippets = await _storageService.LoadSnippetsAsync();
+            
+            // Sort by Order property
+            snippets = snippets.OrderBy(s => s.Order).ToList();
+            
+            // Ensure Order values are sequential
+            for (int i = 0; i < snippets.Count; i++)
+            {
+                snippets[i].Order = i;
+            }
+            
             foreach (var snippet in snippets)
             {
                 Snippets.Add(snippet);
@@ -98,6 +110,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (await DialogHost.Show(dialogViewModel, "RootDialog") is DialogResult.Confirmed)
         {
             Snippet newSnippet = dialogViewModel.GetSnippet();
+            newSnippet.Order = Snippets.Count;
 
             Snippets.Add(newSnippet);
             await SaveSnippetsAsync();
@@ -184,10 +197,12 @@ public partial class MainWindowViewModel : ObservableObject
             var index = Snippets.IndexOf(snippet);
             if (index >= 0)
             {
+                newSnippet.Order = snippet.Order;
                 Snippets[index] = newSnippet;
             }
             else
             {
+                newSnippet.Order = Snippets.Count;
                 Snippets.Add(newSnippet);
             }
             await _storageService.SaveSnippetsAsync(Snippets);
@@ -200,5 +215,46 @@ public partial class MainWindowViewModel : ObservableObject
         _themeService.ToggleTheme();
         IsDarkMode = _themeService.IsDarkMode;
         StatusMessage = $"Switched to {(IsDarkMode ? "dark" : "light")} mode";
+    }
+
+    // IDropTarget implementation for drag-drop reordering
+    public void DragOver(IDropInfo dropInfo)
+    {
+        if (dropInfo.Data is Snippet && dropInfo.TargetCollection != null)
+        {
+            dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+            dropInfo.Effects = System.Windows.DragDropEffects.Move;
+        }
+    }
+
+    public async void Drop(IDropInfo dropInfo)
+    {
+        if (dropInfo.Data is Snippet sourceSnippet && dropInfo.TargetCollection != null)
+        {
+            int oldIndex = Snippets.IndexOf(sourceSnippet);
+            int newIndex = dropInfo.InsertIndex;
+
+            if (oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex)
+            {
+                // Adjust new index if moving down
+                if (newIndex > oldIndex)
+                {
+                    newIndex--;
+                }
+
+                // Move the snippet
+                Snippets.Move(oldIndex, newIndex);
+
+                // Update Order property for all snippets
+                for (int i = 0; i < Snippets.Count; i++)
+                {
+                    Snippets[i].Order = i;
+                }
+
+                // Persist the new order
+                await SaveSnippetsAsync();
+                StatusMessage = $"Reordered snippet: {sourceSnippet.Name}";
+            }
+        }
     }
 }

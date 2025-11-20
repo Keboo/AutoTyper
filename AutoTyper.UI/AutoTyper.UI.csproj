@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="gong-wpf-dragdrop" />
     <PackageReference Include="Henooh.DeviceEmulator">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
