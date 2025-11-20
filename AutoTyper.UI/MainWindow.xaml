@@ -353,23 +353,59 @@
                   </Button>
 
                   <!-- Action Buttons -->
-                  <StackPanel Grid.Column="1" 
-                              Orientation="Horizontal"
-                              VerticalAlignment="Center"
-                              Margin="8">
-                    <Button Style="{StaticResource MaterialDesignIconButton}"
-                            Command="{Binding DataContext.EditSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            CommandParameter="{Binding}"
-                            ToolTip="Edit Snippet">
-                      <materialDesign:PackIcon Kind="Pencil"/>
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignIconButton}"
-                            Command="{Binding DataContext.DeleteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            CommandParameter="{Binding}"
-                            ToolTip="Delete Snippet">
-                      <materialDesign:PackIcon Kind="Delete"/>
-                    </Button>
-                  </StackPanel>
+                  <materialDesign:PopupBox Grid.Column="1"
+                                          VerticalAlignment="Center"
+                                          Margin="8"
+                                          PlacementMode="BottomAndAlignRightEdges"
+                                          StaysOpen="False">
+                    <StackPanel>
+                      <Button Command="{Binding DataContext.CopySnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                              CommandParameter="{Binding}"
+                              ToolTip="Copy Snippet to Clipboard"
+                              Content="Copy">
+                        <Button.ContentTemplate>
+                          <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                              <materialDesign:PackIcon Kind="ContentCopy" 
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,8,0"/>
+                              <TextBlock Text="Copy" VerticalAlignment="Center"/>
+                            </StackPanel>
+                          </DataTemplate>
+                        </Button.ContentTemplate>
+                      </Button>
+                      <Button Command="{Binding DataContext.EditSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                              CommandParameter="{Binding}"
+                              ToolTip="Edit Snippet"
+                              Content="Edit">
+                        <Button.ContentTemplate>
+                          <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                              <materialDesign:PackIcon Kind="Pencil" 
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,8,0"/>
+                              <TextBlock Text="Edit" VerticalAlignment="Center"/>
+                            </StackPanel>
+                          </DataTemplate>
+                        </Button.ContentTemplate>
+                      </Button>
+                      <Button Command="{Binding DataContext.DeleteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                              CommandParameter="{Binding}"
+                              ToolTip="Delete Snippet"
+                              Content="Delete">
+                        <Button.ContentTemplate>
+                          <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                              <materialDesign:PackIcon Kind="Delete" 
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,8,0"/>
+                              <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                            </StackPanel>
+                          </DataTemplate>
+                        </Button.ContentTemplate>
+                      </Button>
+                    </StackPanel>
+                  </materialDesign:PopupBox>
                 </Grid>
               </materialDesign:Card>
             </DataTemplate>

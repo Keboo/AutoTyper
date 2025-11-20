@@ -219,6 +219,25 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
     }
 
     [RelayCommand]
+    private void CopySnippet(Snippet? snippet)
+    {
+        if (snippet is null)
+        {
+            return;
+        }
+
+        try
+        {
+            System.Windows.Clipboard.SetText(snippet.Content);
+            StatusMessage = $"Copied '{snippet.Name}' to clipboard";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error copying to clipboard: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
     private void ToggleTheme()
     {
         _themeService.ToggleTheme();
