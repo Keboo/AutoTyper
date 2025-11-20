@@ -46,7 +46,7 @@ namespace AutoTyper.DeviceEmulator;
 ///
 /// What's new in v1.1.4 of Henooh.DeviceEmulator.
 /// <list type="bullet">
-/// <item>Introduce RunMode, when set to 4, supresses SendInput.</item>
+/// <item>Introduce RunMode, when set to 4, suppresses SendInput.</item>
 /// </list>
 ///
 /// What's new in v1.01.03 of Henooh.DeviceEmulator.
@@ -93,48 +93,6 @@ namespace AutoTyper.DeviceEmulator;
 /// <li>Improved comments and examples throughout many classes and methods.</li>
 /// </ul>
 /// </remarks>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2015-10-30  AS00549  v1.00.00.002  Initial Version
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-03  AS00553  v1.00.00.004  Modified the summary and remarks
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-07  AS00557  v1.00.01.000  New Release with project renamed and full documentation
-/// 2015-11-11  AS00574  v1.00.01.011  Use description tags available in bootstrap to describe Namespace
-/// 2016-01-10  AS00595  v1.00.02.000  Added default constructors, better documentations and general clean up
-/// 2016-01-16  AS00601  v1.00.03.000  Fixed a bug that threw an exception with KeyboardObserver
-/// 2016-02-23  AS00627  v1.00.03.004  Enable XML documentation generation for Debug
-/// 2016-03-27  AS00656  v1.00.03.011  Removed Native.XButton.cs file
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-07-29  AS00697  v1.00.03.020  Modified remarks with up to date information in v1.00.04
-/// 2016-10-23  AS00758  v1.00.04.000  New release to 1.00.04.000
-/// 2016-10-24  AS00759  v1.00.04.001  Quick bug fix - in 1.00.04.000 - Released as 1.00.04.001
-/// 2016-11-20  AS00781  v1.00.04.010  Removed unused using directives
-/// 2016-11-22  AS00783  v1.00.04.011  Modified remarks in prepration of v1.00.05 release
-/// 2016-11-23  AS00784  v1.00.05.000  New release to 1.00.05.000
-/// 2016-12-10  AS00801  v1.00.05.008  Update remarks in prepration changes in 1.00.06 release
-/// 2016-12-17  AS00803  v1.00.05.009  Update remarks in prepration changes in 1.00.06 release
-/// 2016-12-29  AS00806  v1.00.06.000  New release to 1.00.06.000
-/// 2017-02-18  AS00836  v1.00.06.009  Update remarks with critical changes
-/// 2017-08-10  AS00892  v1.01.00.000  New release to 1.01.00.000
-/// 2017-09-03  AS00907  v1.01.01.000  New release to 1.01.01.000
-/// 2017-10-14  AS00935  v1.01.01.002  Added description to the AssemblyInfo
-/// 2018-01-06  AS00975  v1.01.02.000  New release to 1.01.02.000
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2018-04-05  AS01042  v1.01.03.000  New release to 1.01.03.000
-/// 2018-05-30  AS01070  v1.01.03.001  Change the AssemblyName to Henooh.DeviceEmulator
-/// 2018-06-06  AS01074  v1.01.03.002  Modify the summary
-/// 2019-03-28  AS01163  v1.01.04.000  New release to v1.1.4
-/// 2019-04-11  AS01175  v1.01.04.005  Rename the class to A_NamespaceDoc
-/// 2019-04-19  AS01181  v1.01.04.008  Use Microsoft.CodeAnalysis.FxCopAnalyzers v2.9.2 from Nuget
-/// 2019-04-22  AS01182  v1.01.04.009  Add abstract prefix to class
-/// 2019-08-09  AS01212  v1.01.04.015  Use Microsoft.CodeAnalysis.FxCopAnalyzers v2.9.4 from Nuget
-/// 2019-08-12  AS01214  v1.01.04.016  Add a res/values/strings.resx resource file, set the neutural language
-/// 2019-11-07  AS01246  v1.01.04.020  Update the summary
-/// 2019-11-09  AS01247  v1.01.05.000  New release to v1.1.5
-/// 2020-02-22  AS01286  v1.01.06.000  New release to v1.1.6 was not recorded in revision history
-/// </revisionhistory>
 [CompilerGenerated]
 internal abstract class A_NamespaceDoc
 {

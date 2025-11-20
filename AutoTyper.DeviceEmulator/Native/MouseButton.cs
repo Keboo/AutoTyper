@@ -9,13 +9,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// pressed for movements.
 /// </remarks>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2017-01-07  AS00810  v1.00.06.002  Initial Version
-/// 2017-02-28  AS00843  v1.00.06.012  Modify summary, remarks, add XML comments to all enumeration values
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// </revisionhistory>
 public enum MouseButton
 {
     /// <summary>

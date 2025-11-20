@@ -31,48 +31,6 @@ namespace AutoTyper.DeviceEmulator;
 /// </code>
 /// </example>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2015-04-30  AS00448  v0.00.04.014  Initial Version
-/// 2015-05-07  AS00453  v0.00.04.017  Renamed the Class from MouseHookListener to MouseObserver
-/// 2015-05-11  AS00455  v0.00.04.019  Use renamed base class
-/// 2015-05-12  AS00456  v0.00.04.020  Use Point struct from System.Drawing.Point
-/// 2015-06-04  AS00466  v0.00.04.028  Implement changes to GlobalHooker to GlobalObserver
-/// 2015-06-08  AS00468  v0.00.04.030  Renamed Hooker class to ObserverAbstract
-/// 2015-07-16  AS00490  v0.00.04.036  Modified comments under remarks and method
-/// 2015-07-21  AS00493  v0.00.04.039  Moved InteropService for GetDoubleClickTime to local class
-/// 2015-07-23  AS00495  v0.00.04.041  Use renamed class AppObserver
-/// 2015-10-25  AS00544  v1.00.00.000  Now available on nuget.org
-/// 2015-10-28  AS00547  v1.00.00.001  Simplified the summary
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-04  AS00554  v1.00.00.005  Added sealed modifier to the class and changed modifiers for some methods
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-07  AS00556  v1.00.00.007  Renamed a parameter and modified some comments
-/// 2015-11-18  AS00568  v1.00.01.008  Added a a default constructor and modified comments
-/// 2015-11-23  AS00573  v1.00.01.010  Use modified version of MouseEventExtArgs without Point public property
-/// 2016-02-07  AS00620  v1.00.03.002  Modified comments on methods and remarks
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-07-11  AS00692  v1.00.03.017  Added example code for MouseObserver
-/// 2016-07-13  AS00693  v1.00.03.018  Modified revision history to correct previous typo
-/// 2016-08-19  AS00709  v1.00.03.021  Removed unused using statements
-/// 2016-09-24  AS00729  v1.00.03.028  Moved P/Inovke method to SafeNativeMethods class
-/// 2016-10-02  AS00737  v1.00.00.031  Replace int with IntPtr for SafeNativeMethod calls
-/// 2016-10-08  AS00743  v1.00.03.032  Use IntPtr for wParam instead of int
-/// 2016-10-11  AS00746  v1.00.03.033  Rewrite Dispose method
-/// 2016-10-13  AS00748  v1.00.03.035  Modified example of class to show renamed class
-/// 2016-10-15  AS00750  v1.00.03.037  Changed fields to properties, renamed properties, added xml comment headers
-/// 2016-10-18  AS00753  v1.00.03.039  Added visibility xml tags
-/// 2016-10-19  AS00754  v1.00.03.040  Corrected xml comment under constructor
-/// 2016-11-15  AS00777  v1.00.04.009  Added comments to properties
-/// 2016-12-03  AS00794  v1.00.05.003  Summary of default constructor changed with proper see tags
-/// 2016-12-05  AS00796  v1.00.05.005  Follow Henooh Style Guidelines and fit in 120 columns
-/// 2017-02-12  AS00833  v1.00.06.008  Follow Henooh Style Guidelines with parameter names with a prefix
-/// 2017-08-20  AS00897  v1.01.00.001  Resolve messages IDE1005 where Delegate invocation can be simplified
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2019-01-25  AS01141  v1.01.03.004  Modify the summary of the XML comments for the constructors
-/// 2019-04-18  AS01179  v1.01.04.006  Resolve IDE0054 by using compound assignment
-/// </revisionhistory>
 public sealed class MouseObserver : BaseObserver
 {
     /// <summary>
@@ -122,7 +80,7 @@ public sealed class MouseObserver : BaseObserver
     /// </summary>
     /// <remarks>
     /// This event provides extended arguments of type <see cref="T:System.Windows.Forms.MouseEventArgs" /> enabling you to 
-    /// supress further processing of mouse movement in other applications.
+    /// suppress further processing of mouse movement in other applications.
     /// </remarks>
     /// <visibility>internal</visibility>
     internal event EventHandler<MouseEventExtArgs> MouseMoveExt;
@@ -138,9 +96,9 @@ public sealed class MouseObserver : BaseObserver
     /// </summary>
     /// <remarks>
     /// This event provides extended arguments of type <see cref="T:System.Windows.Forms.MouseEventArgs" /> enabling you to 
-    /// supress further processing of mouse click in other applications.
+    /// suppress further processing of mouse click in other applications.
     /// </remarks>
-    [Obsolete("To supress mouse clicks use MouseDownExt event instead.")]
+    [Obsolete("To suppress mouse clicks use MouseDownExt event instead.")]
     internal event EventHandler<MouseEventExtArgs> MouseClickExt;
 
     /// <summary>
@@ -154,7 +112,7 @@ public sealed class MouseObserver : BaseObserver
     /// </summary>
     /// <remarks>
     /// This event provides extended arguments of type <see cref="T:System.Windows.Forms.MouseEventArgs" /> enabling you to 
-    /// supress further processing of mouse click in other applications.
+    /// suppress further processing of mouse click in other applications.
     /// </remarks>
     /// <visibility>internal</visibility>
     internal event EventHandler<MouseEventExtArgs> MouseDownExt;
@@ -275,7 +233,7 @@ public sealed class MouseObserver : BaseObserver
         InvokeMouseEventHandlerExt(this.MouseDownExt, e);
         if (e.Handled)
         {
-            SetSupressButtonUpFlag(e.Button);
+            SetSuppressButtonUpFlag(e.Button);
             e.Handled = true;
         }
     }
@@ -324,12 +282,12 @@ public sealed class MouseObserver : BaseObserver
     /// <visibility>private</visibility>
     private void ProcessMouseUp(ref MouseEventExtArgs e)
     {
-        if (!HasSupressButtonUpFlag(e.Button))
+        if (!HasSuppressButtonUpFlag(e.Button))
         {
             InvokeMouseEventHandler(this.MouseUp, e);
             return;
         }
-        RemoveSupressButtonUpFlag(e.Button);
+        RemoveSuppressButtonUpFlag(e.Button);
         e.Handled = true;
     }
 
@@ -346,32 +304,32 @@ public sealed class MouseObserver : BaseObserver
     }
 
     /// <summary>
-    /// Method that remove SupressButtonUpFlags.
+    /// Method that removes SuppressButtonUpFlags.
     /// </summary>
     /// <param name="aButton"></param>
     /// <visibility>private</visibility>
-    private void RemoveSupressButtonUpFlag(MouseButtons aButton)
+    private void RemoveSuppressButtonUpFlag(MouseButtons aButton)
     {
         SuppressButtonUpFlags ^= aButton;
     }
 
     /// <summary>
-    /// Method that returns SupressButtonUpFlags.
+    /// Method that returns SuppressButtonUpFlags.
     /// </summary>
     /// <param name="aButton"></param>
     /// <returns></returns>
     /// <visibility>private</visibility>
-    private bool HasSupressButtonUpFlag(MouseButtons aButton)
+    private bool HasSuppressButtonUpFlag(MouseButtons aButton)
     {
         return (SuppressButtonUpFlags & aButton) != 0;
     }
 
     /// <summary>
-    /// Method that sets SupressButtonUpFlags.
+    /// Method that sets SuppressButtonUpFlags.
     /// </summary>
     /// <param name="aButton"></param>
     /// <visibility>private</visibility>
-    private void SetSupressButtonUpFlag(MouseButtons aButton)
+    private void SetSuppressButtonUpFlag(MouseButtons aButton)
     {
         SuppressButtonUpFlags |= aButton;
     }

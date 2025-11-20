@@ -13,46 +13,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// BaseObserver has components that is shared by AppObserver and GlobalObserver.
 /// </remarks>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2015-04-28  AS00446  v0.00.04.012  Initial Version
-/// 2015-05-11  AS00455  v0.00.04.019  Renamed class to BaseObserver
-/// 2015-06-08  AS00468  v0.00.04.030  Renamed Hooker class to ObserverAbstract
-/// 2015-07-17  AS00491  v0.00.04.037  Corrected file name under remarks and made edits to summary
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-09  AS00559  v1.00.01.001  Renamed Subscribe method to Observe Method, m_Hooker to observer
-/// 2015-11-11  AS00661  v1.00.01.003  Modified comments for GetHookId method
-/// 2015-11-12  AS00562  v1.00.01.004  Use the new HookCallBack from ObserverAbstract namespace
-/// 2015-11-16  AS00565  v1.00.01.006  Removed CallNextHook method and return directly from MonitorActivity method
-/// 2015-11-17  AS00566  v1.00.01.007  Added default constructor that uses GlobalObserver
-/// 2015-11-18  AS00568  v1.00.01.008  Added comments to new Default constructor, modified remarks
-/// 2016-02-06  AS00619  v1.00.03.001  Added comment for IsGlobal method
-/// 2016-02-27  AS00631  v1.00.03.005  Fixed the name of parameter for MonitorActivity method
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-09-17  AS00722  v1.00.03.023  Properly handle IDisposable
-/// 2016-09-22  AS00727  v1.00.03.027  Use moved NativeMethods
-/// 2016-09-24  AS00729  v1.00.03.028  Renamed NativeMethods class to SafeNativeMethods class
-/// 2016-10-02  AS00737  v1.00.00.031  Replace int with IntPtr for SafeNativeMethod calls
-/// 2016-10-08  AS00743  v1.00.03.032  Use IntPtr for wParam instead of int
-/// 2016-10-11  AS00746  v1.00.03.033  Correctly implement IDisposable
-/// 2016-10-12  AS00747  v1.00.03.034  Changed observer field to Observer property
-/// 2016-10-13  AS00748  v1.00.03.035  Added comment to properties
-/// 2016-10-18  AS00753  v1.00.03.039  Added visibilty xml tags, added xml comment to Dispose(bool)
-/// 2016-10-19  AS00754  v1.00.03.040  Modified summary, comments throughout the code
-/// 2016-11-26  AS00781  v1.00.05.002  Removed unused using directives
-/// 2017-02-21  AS00839  v1.00.06.010  Change the comment to be more clear on Dispose method
-/// 2017-10-15  AS00936  v1.01.01.003  Resolved IDE0016 message, null check can be simplified
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2019-01-30  AS01143  v1.01.03.005  Modify the layout of the code, add XML header comments to all properties
-/// 2019-03-25  AS01160  v1.01.03.008  Use the static StopObserve method from ObserverAbstract
-/// 2019-03-27  AS01162  v1.01.03.010  Resolve CA1026 by adding constructor that provides all default arguments
-/// 2019-04-24  AS01184  v1.01.04.011  Resolve CA1806 by assigning the result to a variable
-/// 2019-05-02  AS01185  v1.01.04.012  Follow Henooh Coding Standards to have the code within 120 characters
-/// 2019-08-08  AS01210  v1.01.04.014  Corrected spelling for the message that was thrown during an exception
-/// 2019-08-12  AS01214  v1.01.04.016  Use the resource table to retrive string message for an exception
-/// </revisionhistory>
 public abstract class BaseObserver : IDisposable
 {
     /// <summary>
@@ -139,7 +99,7 @@ public abstract class BaseObserver : IDisposable
     }
 
     /// <summary>
-    /// Provides a  method to be overriddden, which will dicate the logic of firing events.
+    /// Provides a method to be overridden, which will dictate the logic of firing events.
     /// </summary>
     /// <visibility>protected</visibility>
     protected abstract bool ProcessCallback(IntPtr wParam, IntPtr lParam);

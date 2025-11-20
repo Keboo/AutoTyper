@@ -7,20 +7,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// VirtualKeyCode.cs provides enumerations to define windows keyboard virtual key codes.
 /// </remarks>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2015-04-20  AS00439  v0.00.04.005  Initial version
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-04  AS00554  v1.00.00.005  Changed access modifier to internal for the class
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-16  AS00565  v1.00.01.006  Removed public comments
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-10-20  AS00755  v1.00.03.041  Changed access modifier to public for the class
-/// 2017-10-25  AS00944  v1.01.01.004  Modified visibility of code
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2018-08-13  AS01099  v1.01.02.007  Update revisionhistory formatiing
-/// </revisionhistory>
 public enum VirtualKeyCode
 {
     /// <summary></summary>

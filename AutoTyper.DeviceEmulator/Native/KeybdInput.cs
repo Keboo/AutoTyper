@@ -30,22 +30,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// were pressed, but the scan code will always be the same.
 /// </remarks>
 /// <visibility>internal</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2013-10-15  AS00122  v0.00.00.122  Initial Version
-/// 2014-03-18  AS00203  v0.00.00.203  Moved to Henooh.Utility.Native Namespace
-/// 2014-04-14  AS00230  v0.00.00.230  Moved to HenoohUtility as a Class Library Project (dll)
-/// 2015-04-02  AS00420  v0.00.04.000  Moved to HenoohInputSimulator Project
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-19  AS00569  v1.00.01.009  Modified summary and remarks
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-10-01  AS00736  v1.00.03.030  Modified access modifer to this struct as internal along with its fields
-/// 2016-10-11  AS00746  v1.00.03.033  Renamed the class from KEYBDINPUT
-/// 2016-10-18  AS00753  v1.00.03.039  Added visibilty xml tags, follow Henooh Style Guidelines for 120 char 
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// </revisionhistory>
 internal struct KeybdInput
 {
     /// <summary>

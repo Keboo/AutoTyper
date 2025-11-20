@@ -12,31 +12,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// ObserverAbstract uses combination of SetWindowHookEx to raise events.
 /// </remarks>
 /// <visibility>internal</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2015-04-28  AS00446  v0.00.04.012  Initial Version
-/// 2015-05-14  AS00457  v0.00.04.021  During Unsubscribe, result of 0 is expected from UnhookWindowsHookEx
-/// 2015-06-08  AS00468  v0.00.04.030  Renamed Hooker class to ObserverAbstract
-/// 2015-08-18  AS00509  v0.00.04.050  Correct file name under remarks as ObserverAbstract
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-09  AS00559  v1.00.01.001  Renamed Subscribe method to Observe, Unsubscribe to StopObserve
-/// 2015-11-12  AS00562  v1.00.01.004  Moved HookCallback delegate inside to ObserverAbstract from Native namespace
-/// 2016-07-13  AS00693  v1.00.03.018  Modified summary and remarks
-/// 2016-07-24  AS00695  v1.00.03.019  Added XML comment to StopObserve method
-/// 2016-09-22  AS00727  v1.00.03.027  Moved P/Invoke methods to NativeMethods class
-/// 2016-09-24  AS00729  v1.00.03.028  Renamed NativeMethods class to SafeNativeMethods class
-/// 2016-10-02  AS00737  v1.00.00.031  Replace int with IntPtr for SafeNativeMethod calls
-/// 2016-10-08  AS00743  v1.00.03.032  Use IntPtr for wParam instead of int
-/// 2016-10-14  AS00749  v1.00.03.036  Modified access modifier for HookCallback delegate to internal
-/// 2016-10-20  AS00755  v1.00.03.041  Added visibility xml tags
-/// 2016-11-26  AS00781  v1.00.05.002  Removed unused using directives
-/// 2017-02-25  AS00842  v1.00.06.011  Observe method parameters to follow Henooh Style Guidelines
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2019-02-04  AS01147  v1.01.03.006  Add XML header comments to all methods
-/// 2019-03-25  AS01160  v1.01.03.008  Resolved CA1822, added static prefix to StopObserve method
-/// </revisionhistory>
 public abstract class ObserverAbstract
 {
     /// <summary>

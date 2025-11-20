@@ -13,25 +13,6 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// documents as necessary.
 /// </remarks>
 /// <visibility>internal</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2016-09-19  AS00724  v1.00.03.025  Initial Version
-/// 2016-09-22  AS00727  v1.00.03.027  Moved P/Invoke methods from ObserverAbstract class
-/// 2016-09-24  AS00729  v1.00.03.028  Renamed the class to SafeNativeMethods, moved more methods to this class
-/// 2016-09-30  AS00735  v1.00.00.029  Moved SendInput method to this class
-/// 2016-10-01  AS00736  v1.00.00.030  Moved GetCurrentThreadId method to this class
-/// 2016-10-02  AS00737  v1.00.00.031  Replace int with IntPtr for SafeNativeMethod calls
-/// 2016-10-08  AS00743  v1.00.03.032  Use IntPtr for wParam instead of int
-/// 2016-10-11  AS00746  v1.00.03.033  Added explicit class access modifier as internal, renamed INPUT to Input
-/// 2016-10-13  AS00748  v1.00.03.035  Added remarks
-/// 2016-10-19  AS00754  v1.00.03.040  Added visibility tags
-/// 2016-11-26  AS00781  v1.00.05.002  Removed unused using directives
-/// 2016-12-09  AS00800  v1.00.05.007  Move ForPerMonitorDPI method to this class
-/// 2017-02-28  AS00843  v1.00.06.012  Add XML comments to all methods, modify remarks on CallNextHookEx method
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2019-03-25  AS01160  v1.01.03.008  Add private constructor to resolve Code Analysis warning
-/// </revisionhistory>
 internal class SafeNativeMethods
 {
     /// <summary>

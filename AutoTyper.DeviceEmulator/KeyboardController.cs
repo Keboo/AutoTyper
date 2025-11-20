@@ -16,53 +16,6 @@ namespace AutoTyper.DeviceEmulator;
 /// a human types. 
 /// </remarks>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2013-10-15  AS00122  v0.00.00.122  Initial Version
-/// 2013-10-21  AS00128  v0.00.00.128  Separate methods to Private methods and Public methods
-/// 2013-10-22  AS00129  v0.00.00.129  Use List instead of array of INPUT to send at a time
-/// 2013-10-26  AS00133  v0.00.00.133  Disable Left Shift on every SendInput
-/// 2013-12-16  AS00172  v0.00.00.172  Added function to Disable Shift and Shift back
-/// 2014-03-18  AS00203  v0.00.00.203  Moved to Henooh.Utility.Native Namespace
-/// 2014-04-14  AS00230  v0.00.00.230  Moved to HenoohUtility as a Class Library Project (dll)
-/// 2015-02-18  AS00362  v0.00.02.362  Added comments regarding the state of CapsLock and NumLock status for  Type and TypeString
-/// 2015-02-26  AS00372  v0.00.03.001  Modified the summary and remarks, added comments to fields
-/// 2015-02-27  AS00373  v0.00.03.002  Removed Virtual Keyboard field and method, Removed NumLock and CapsLock status, Use SendInput method instead
-/// 2015-04-02  AS00420  v0.00.04.000  Moved to HenoohInputSimulator Project
-/// 2015-05-28  AS00462  v0.00.04.024  Changed Type method parameter from STRING_ARRAY to KEYBDINPUT_ARRAY
-/// 2015-07-17  AS00490  v0.00.04.036  Removed string buffer and char buffer and simplify Type methods
-/// 2015-07-23  AS00495  v0.00.04.041  Use VirtualKeyCode enumeration for dictionary type 
-/// 2015-07-31  AS00499  v0.00.04.043  Removed comment and console output
-/// 2015-08-19  AS00510  v0.00.04.051  Correctly calculate Sleep Interval based on word, word-1, char or char-1
-/// 2015-08-20  AS00511  v0.00.04.052  Return early if string is white space or null
-/// 2015-08-26  AS00514  v0.00.04.054  Change ReleaseKey and PressKey to remove List implementation
-/// 2015-09-24  AS00532  v0.00.04.063  TypeString without interval now sends one key at a time instead of batch
-/// 2015-09-30  AS00536  v0.00.04.064  Provide default value for interval parameter in TypeString method
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-03  AS00553  v1.00.00.004  Renamed all occurrences of Key to VirtualKeyCode and modified PressKey and ReleaseKey and other methods that use VirtualKeyCode
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to AutoTyper.DeviceEmulator
-/// 2015-11-16  AS00565  v1.00.01.006  Removed static modifier from the class and methods
-/// 2015-11-19  AS00569  v1.00.01.009  Added revision history above code
-/// 2016-01-18  AS00603  v1.00.03.000  Added XML comment headers
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-08-04  AS00705  v1.00.03.020  Fixed the logic on interval delay when natural typing is called
-/// 2016-08-29  AS00716  v1.00.03.022  Moved inputBuffer and inputList to BaseController
-/// 2016-10-08  AS00743  v1.00.03.032  Removed use of inputList, use individual SendInput for each event
-/// 2016-10-15  AS00750  v1.00.03.037  Removed use of Field inputBuffer and inputList
-/// 2016-10-16  AS00751  v1.00.03.038  Added XML visibility tags for properties and methods
-/// 2016-10-19  AS00754  v1.00.03.040  Removed const declaration for VirtualKeyCodeDictionary
-/// 2016-10-30  AS00765  v1.00.04.003  Implement CancellationToken on KeyboardController
-/// 2016-11-01  AS00767  v1.00.04.004  Call BaseController constructor and Sleep method from BaseController
-/// 2016-11-22  AS00783  v1.00.04.011  Added XML comments to all methods
-/// 2016-11-26  AS00781  v1.00.05.002  Removed unused using directives
-/// 2016-12-27  AS00803  v1.00.05.010  Refactor Type and TypeString method to expose more public methods
-/// 2017-02-25  AS00842  v1.00.06.011  Follow Henooh Style Guidelines to not exceed 120 characters
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from AutoTyper.DeviceEmulator to AutoTyper.DeviceEmulator
-/// 2018-12-17  AS01131  v1.01.03.003  Add visibility tags to XML comments
-/// 2019-01-30  AS01143  v1.01.03.005  Modify the layout of the code, add XML header comments to all properties
-/// 2019-04-11  AS01175  v1.01.04.005  Resolve CA1822 by adding static prefix to SendKeyEvent
-/// </revisionhistory>
 public class KeyboardController : BaseController
 {
     /// <summary>

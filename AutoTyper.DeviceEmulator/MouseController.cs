@@ -13,10 +13,10 @@ using AutoTyper.DeviceEmulator.Native;
 namespace AutoTyper.DeviceEmulator;
 
 /// <summary>
-/// Provides a mechanism to emulate sending commands to pysical mouse device by calling methods.
+/// Provides a mechanism to emulate sending commands to physical mouse device by calling methods.
 /// </summary>
 /// <remarks>
-/// MouseController class offers ability to control and mouse devices.
+/// MouseController class offers the ability to control mouse devices.
 /// In order to use MouseController, create an instance by using a constructor.
 /// Then in order to emulate controlling the mouse, call the methods.
 /// </remarks>
@@ -26,7 +26,7 @@ namespace AutoTyper.DeviceEmulator;
 /// // Use Mouse Controller to Move to certain coordinate on desktop.
 /// public void MoveMouse()
 /// {
-///     // Initalize MouseController.
+///     // Initialize MouseController.
 ///     MouseController mouse = new MouseController();
 ///
 ///     // Emulate movement of the mouse.
@@ -35,109 +35,6 @@ namespace AutoTyper.DeviceEmulator;
 /// </code>
 /// </example>
 /// <visibility>public</visibility>
-/// <revisionhistory>
-/// YYYY-MM-DD  AS#####  v#.##.##.###  Change Description
-/// ==========  =======  ============  ============================================================================
-/// 2011-09-29  AS00000  v0.00.00.000  Initial Version
-/// 2012-01-14  AS00000  v0.00.00.000  Moved wheeldown and wheelup to public functions
-/// 2012-07-26  AS00000  v0.00.00.000  Ported C++ version to C# version
-/// 2013-02-01  AS00000  v0.00.00.000  Added Point based calls for mouse movements
-/// 2013-03-26  AS00002  v0.00.00.002  Revision History Update - renamed methods to follow standard format
-/// 2013-04-07  AS00007  v0.00.00.007  Added middle mouse button features
-/// 2013-06-14  AS00040  v0.00.00.040  More natural mouse movements, increased base iterations, Move() method
-/// 2013-06-15  AS00041  v0.00.00.041  Move will ensure the mouse will move to the final destination
-/// 2013-10-02  AS00115  v0.00.00.115  Added comments, renamed class and clean up code
-/// 2013-10-15  AS00122  v0.00.00.122  GetCursorBitmap method implemented
-/// 2013-10-21  AS00127  v0.00.00.127  GetCursorHash method returns the hash code of current cursor
-/// 2014-02-28  AS00185  v0.00.00.185  Added MoveClickDelay methods
-/// 2014-03-12  AS00200  v0.00.00.200  Updated ConsoleDebug variable as a public variable with getter and setter
-/// 2014-03-18  AS00203  v0.00.00.203  Moved HenoohMouse to Henooh.Utility namespace
-/// 2014-03-23  AS00210  v0.00.00.210  Properly dispose cursor Bitmap after calculating hash value
-/// 2014-04-05  AS00222  v0.00.00.222  CaptureBitmap now handles rare exceptions thrown in System.Drawing.dll
-/// 2014-04-08  AS00224  v0.00.00.224  Changed the class to be Public
-/// 2014-04-14  AS00230  v0.00.00.230  Moved to HenoohUtility as a Class Library Project (dll)
-/// 2014-04-17  AS00233  v0.00.00.233  MoveDelayClick method added and restore functionality of GetCursorHash
-/// 2014-06-25  AS00261  v0.00.01.027  Redefined summary
-/// 2014-08-31  AS00287  v0.00.01.053  Redefined mouse cursor to PrimaryMonitorSize
-/// 2014-10-06  AS00311  v0.00.03.000  Removed dependency of HenoohVision, moved GetCursor methods to HenoohVision
-/// 2014-10-22  AS00312  v0.00.03.001  Fixed a bug in MoveClickDelay method
-/// 2015-03-19  AS00407  v0.00.03.011  Changed Input Parameters for DragDrop
-/// 2015-04-02  AS00419  v0.00.03.012  Changed name from HenoohMouse to MiniMouse
-/// 2015-04-02  AS00420  v0.00.04.000  Moved to HenoohInputSimulator Project
-/// 2015-04-06  AS00424  v0.00.04.001  Removed all Debug features
-/// 2015-04-07  AS00426  v0.00.04.002  Change default value for Move parameters
-/// 2015-04-08  AS00427  v0.00.04.003  Added MoveRelative methods and standardized movementVelocityLogFactor
-/// 2015-04-11  AS00431  v0.00.04.004  Changed paramter for time from integer to TimeSpan
-/// 2015-04-21  AS00439  v0.00.04.008  Implemented new method called MoveDelayClick
-/// 2015-04-22  AS00440  v0.00.04.009  Added comments with MoveDelayClick methods
-/// 2015-04-24  AS00442  v0.00.04.010  SendInput extern is now a private static method, overloaded AbsoluteMove
-/// 2015-04-27  AS00444  v0.00.04.011  Changed the aMovementVelocityLogFactor where 0 is the lowest speed
-/// 2015-05-06  AS00452  v0.00.04.016  Renamed HenoohMouse to MouseController
-/// 2015-07-14  AS00489  v0.00.04.035  Modified the file name under remarks
-/// 2015-07-22  AS00494  v0.00.04.040  Remove dependency on NativeMethods
-/// 2015-10-25  AS00544  v1.00.00.000  Now available on nuget.org
-/// 2015-10-28  AS00547  v1.00.00.001  Simplified the summary, modified the remarks and added paragraphing
-/// 2015-11-02  AS00552  v1.00.00.003  Use the new commenting that works with HenoohDocumentationGenerator
-/// 2015-11-04  AS00554  v1.00.00.005  Added sealed modifier to the class
-/// 2015-11-05  AS00555  v1.00.00.006  Renamed Namespace from HenoohInputSimulator to HenoohDeviceEmulator
-/// 2015-11-09  AS00559  v1.00.01.001  Added example and modified the remarks section
-/// 2015-11-10  AS00560  v1.00.01.002  Modified summary of all methods for better documentation
-/// 2015-11-11  AS00561  v1.00.01.003  Fixed a bug that missed a semi-colon
-/// 2016-02-28  AS00632  v1.00.03.006  Fix XML Comment warnings
-/// 2016-03-08  AS00641  v1.00.03.010  Fixed few methods to follow Henooh Style Guidelines
-/// 2016-03-28  AS00657  v1.00.03.012  Modified name of parameters to follow Henooh Style Guidelines
-/// 2016-03-29  AS00658  v1.00.03.013  Modified example to follow Henooh Style Guidelines
-/// 2016-04-02  AS00661  v1.00.03.014  Created a private method called SendMouseInput, a common input
-/// 2016-04-04  AS00663  v1.00.03.015  Replaced revisionhistory from CR# to AS#
-/// 2016-04-07  AS00666  v1.00.03.016  Corrected some grammar in code example and method comments
-/// 2016-08-19  AS00709  v1.00.03.021  Removed unused using statements
-/// 2016-08-29  AS00716  v1.00.03.022  Derive from Abstract BaseController class
-/// 2016-09-30  AS00735  v1.00.03.029  Use SendInput from SafeNativeMethods class
-/// 2016-10-11  AS00746  v1.00.03.033  Add visibility xml tags, renamed class INPUT to Input
-/// 2016-10-13  AS00748  v1.00.03.035  Modified comments inside the methods
-/// 2016-10-15  AS00750  v1.00.03.037  Moved inputBuffer and inputList to BaseController
-/// 2016-10-19  AS00754  v1.00.03.040  Corrected grammar on all comments
-/// 2016-10-24  AS00759  v1.00.04.001  Fixed a bug that only sends LeftDown for SendMouseInput commands
-/// 2016-10-29  AS00764  v1.00.04.002  Implement CancellationToken for MouseController
-/// 2016-10-30  AS00765  v1.00.04.003  Implement CancellationToken on BaseController
-/// 2016-11-02  AS00768  v1.00.04.005  Use Sleep method from Native instead of Thread.Sleep
-/// 2016-11-09  AS00772  v1.00.00.032  Resolved XML comment for publicly visible type or member warning
-/// 2016-11-20  AS00781  v1.00.04.010  Changed fields to properties, added access modifiers
-/// 2016-11-22  AS00783  v1.00.04.011  Added comments to CancellationToken constructor
-/// 2016-12-04  AS00795  v1.00.05.004  Modified XML comments for constructors
-/// 2016-12-05  AS00796  v1.00.05.005  Implement Dpi Awareness methods
-/// 2016-12-06  AS00797  v1.00.05.006  Remove code that is irrelevent, added implementation of PhysicalToLogical
-/// 2016-12-09  AS00800  v1.00.05.007  Moved native class to SafeNativeMethods class, add XML header comments
-/// 2016-12-10  AS00801  v1.00.05.008  Implement ShowDisplayInfo method, and added XML comments to added methods
-/// 2016-12-17  AS00803  v1.00.05.009  Add LeftRightClickHold method
-/// 2017-01-05  AS00808  v1.00.06.001  Add XButton, and click method now has an optional parameter
-/// 2017-01-07  AS00810  v1.00.06.002  Add ButtonDown and ButtonUp methods
-/// 2017-01-08  AS00811  v1.00.06.003  Made Down and Up methods obsolete, use new method with parameters instead
-/// 2017-01-18  AS00818  v1.00.06.004  Click method rewritten to use MouseDown and MouseUp methods
-/// 2017-01-21  AS00820  v1.00.06.005  Replace using obsolete methods to regular methods
-/// 2017-01-26  AS00825  v1.00.06.006  Add XML comments to MouseDown and MouseUp methods
-/// 2017-01-31  AS00829  v1.00.06.007  Add examples and visibility tags to some methods
-/// 2017-08-09  AS00891  v1.00.06.015  Removed some methods from becoming obsolete, used ButtonDown methods
-/// 2017-08-20  AS00897  v1.01.00.001  Resolve messages IDE0017 where Object initialization can be simplified
-/// 2018-02-27  AS01011  v1.01.02.001  Delete obsolete methods, Added remarks for operations supported for Win 8.1
-/// 2018-03-26  AS01034  v1.01.02.002  Rename namespace from HenoohDeviceEmulator to Henooh.DeviceEmulator
-/// 2018-12-17  AS01131  v1.01.03.003  Add visibility tags to methods without them
-/// 2019-01-25  AS01141  v1.01.03.004  Modify the summary of the XML comments for the constructors
-/// 2019-03-27  AS01162  v1.01.03.010  Implement RunMode and suppress SendInput being sent
-/// 2019-03-29  AS01164  v1.01.04.001  Resolve CA01026 by overriding click method
-/// 2019-04-01  AS01166  v1.01.04.002  Resolve CA01026 by overriding ButtonDown and ButtonUp methods
-/// 2019-04-18  AS01179  v1.01.04.006  Use discard for not using status from a native call
-/// 2019-04-19  AS01180  v1.01.04.007  Resolve IDE0054 by using compound assignments
-/// 2019-04-22  AS01182  v1.01.04.009  Replace System.Console with Trace
-/// 2019-04-23  AS01183  v1.01.04.010  Add static prefix to few methods
-/// 2019-04-24  AS01184  v1.01.04.011  Resolve CA1806 by assigning the result to a variable
-/// 2019-05-02  AS01185  v1.01.04.012  Resolve IDE0059 by removing redundant assignments and values
-/// 2019-08-06  AS01209  v1.01.04.013  Added two static methods that will return System.Windows.Points
-/// 2019-08-08  AS01210  v1.01.04.014  Resolve IDE0059 by using Discard operation on AbsoluteMove method
-/// 2019-11-15  AS01249  v1.01.05.001  Resolve CA1829 by using the Count property instead of Enumerable.Count
-/// 2019-11-21  AS01251  v1.01.06.001  Resolve CA1829 by using the Count property instead of Enumerable.Count
-/// 2019-11-27  AS01254  v1.01.06.002  Remove unused using statements
-/// </revisionhistory>
 public sealed class MouseController : BaseController
 {
     /// <summary>
