@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Forms;
 
 using AutoTyper.DeviceEmulator.Native;
 
@@ -182,8 +181,8 @@ public sealed class MouseController : BaseController
     /// <visibility>public</visibility>
     public MouseController()
     {
-        DesktopWidth = SystemInformation.PrimaryMonitorSize.Width;
-        DesktopHeight = SystemInformation.PrimaryMonitorSize.Height;
+        DesktopWidth = SystemInfo.PrimaryMonitorSize.Width;
+        DesktopHeight = SystemInfo.PrimaryMonitorSize.Height;
     }
 
     /// <summary>
@@ -195,8 +194,8 @@ public sealed class MouseController : BaseController
     public MouseController(CancellationToken aCancellationToken)
         : base(aCancellationToken)
     {
-        DesktopWidth = SystemInformation.PrimaryMonitorSize.Width;
-        DesktopHeight = SystemInformation.PrimaryMonitorSize.Height;
+        DesktopWidth = SystemInfo.PrimaryMonitorSize.Width;
+        DesktopHeight = SystemInfo.PrimaryMonitorSize.Height;
     }
 
     /// <summary>
@@ -205,8 +204,8 @@ public sealed class MouseController : BaseController
     /// <visibility>public</visibility>
     public static void ShowDisplayInfo()
     {
-        Screen[] allScreens = Screen.AllScreens;
-        foreach (Screen screen in allScreens)
+        ScreenInfo[] allScreens = ScreenInfo.AllScreens;
+        foreach (ScreenInfo screen in allScreens)
         {
             Trace.WriteLine("Device Name: " + screen.DeviceName);
             Trace.WriteLine("Bounds: " + screen.Bounds.ToString());
@@ -223,7 +222,7 @@ public sealed class MouseController : BaseController
     /// <returns></returns>
     public System.Drawing.Point GetMouseCursorPosition()
     {
-        System.Drawing.Point position = Cursor.Position;
+        System.Drawing.Point position = CursorHelper.Position;
         if (UseLogicalCoordinate)
         {
             return position;
@@ -572,7 +571,7 @@ public sealed class MouseController : BaseController
         }
         while (point.X < point2.X - aOffsetAccuracy || point.X > point2.X + aOffsetAccuracy || point.Y < point2.Y - aOffsetAccuracy || point.Y > point2.Y + aOffsetAccuracy)
         {
-            point = Cursor.Position;
+            point = CursorHelper.Position;
             int num = point2.X - point.X;
             if (num != 0)
             {
@@ -597,8 +596,8 @@ public sealed class MouseController : BaseController
     /// <visibility>public</visibility>
     public void AbsoluteMove(int aDestinationX, int aDestinationY, double aMovementVelocityLogFactor = 1.0)
     {
-        int x = Cursor.Position.X;
-        int y = Cursor.Position.Y;
+        int x = CursorHelper.Position.X;
+        int y = CursorHelper.Position.Y;
         double a = Math.Sqrt((aDestinationX - x) * (aDestinationX - x) + (aDestinationY - y) * (aDestinationY - y));
         int num = (int)Math.Log(a, 1.001 + 1.0 * aMovementVelocityLogFactor) + 5;
         double num2 = x;
