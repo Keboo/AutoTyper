@@ -1,6 +1,8 @@
 ﻿using System.CommandLine;
 using System.Runtime.InteropServices;
 
+using AutoTyper.DeviceEmulator;
+using AutoTyper.DeviceEmulator.Native;
 using TextCopy;
 
 namespace AutoTyper;
@@ -73,17 +75,19 @@ public sealed partial class Program
             IntPtr activeWindow = NativeMethods.GetForegroundWindow();
             string windowText = GetWindowText(activeWindow);
 
-            //TODO: Replace this with direct calls and remove the library
-            Henooh.DeviceEmulator.KeyboardController kc = new(token);
+            KeyboardController kc = new(token);
             if (parseResult.GetValue(fastTyping))
             {
-                kc.NaturalTypingFlag = false;
+                kc.TypeStringNaturally(text, text.Length * 60);
             }
-            kc.TypeString(text);
+            else
+            {
+                kc.TypeString(text);
+            }
 
             if (parseResult.GetValue(addNewLine))
             {
-                kc.Type(Henooh.DeviceEmulator.Native.VirtualKeyCode.RETURN);
+                kc.Type(VirtualKeyCode.RETURN);
             }
 
             if (verboseValue)

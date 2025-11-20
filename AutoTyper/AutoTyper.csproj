@@ -35,11 +35,12 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Henooh.DeviceEmulator">
-      <NoWarn>NU1701</NoWarn>
-    </PackageReference>
     <PackageReference Include="System.CommandLine" />
     <PackageReference Include="TextCopy" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutoTyper.DeviceEmulator\AutoTyper.DeviceEmulator.csproj" />
   </ItemGroup>
 
 </Project>

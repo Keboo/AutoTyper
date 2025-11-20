@@ -19,12 +19,13 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="gong-wpf-dragdrop" />
-    <PackageReference Include="Henooh.DeviceEmulator">
-      <NoWarn>NU1701</NoWarn>
-    </PackageReference>
     <PackageReference Include="MaterialDesignThemes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Velopack" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AutoTyper.DeviceEmulator\AutoTyper.DeviceEmulator.csproj" />
   </ItemGroup>
 </Project>
