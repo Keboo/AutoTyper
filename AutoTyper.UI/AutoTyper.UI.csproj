@@ -5,6 +5,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
 
     <UseWPF>true</UseWPF>
+    <IsPackable>false</IsPackable>
     <StartupObject>AutoTyper.UI.App</StartupObject>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
