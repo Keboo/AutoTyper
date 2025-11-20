@@ -18,24 +18,24 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// </revisionhistory>
 public enum MouseButton
 {
-	/// <summary>
-	/// Represents the left mouse button.
-	/// </summary>
-	Left,
-	/// <summary>
-	/// Represents the right mouse button.
-	/// </summary>
-	Right,
-	/// <summary>
-	/// Represents the middle mouse button.
-	/// </summary>
-	Middle,
-	/// <summary>
-	/// Represents the X mouse button.
-	/// </summary>
-	XButton,
-	/// <summary>
-	/// Represents the combination of the left and the right mouse buttons.
-	/// </summary>
-	LeftAndRight
+    /// <summary>
+    /// Represents the left mouse button.
+    /// </summary>
+    Left,
+    /// <summary>
+    /// Represents the right mouse button.
+    /// </summary>
+    Right,
+    /// <summary>
+    /// Represents the middle mouse button.
+    /// </summary>
+    Middle,
+    /// <summary>
+    /// Represents the X mouse button.
+    /// </summary>
+    XButton,
+    /// <summary>
+    /// Represents the combination of the left and the right mouse buttons.
+    /// </summary>
+    LeftAndRight
 }

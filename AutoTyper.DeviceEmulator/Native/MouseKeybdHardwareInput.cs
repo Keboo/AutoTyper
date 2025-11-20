@@ -31,34 +31,34 @@ namespace AutoTyper.DeviceEmulator.Native;
 [StructLayout(LayoutKind.Explicit)]
 internal struct MouseKeybdHardwareInput
 {
-	/// <summary>
-	/// The <see cref="T:AutoTyper.DeviceEmulator.Native.MouseInput" /> definition.
-	/// </summary>
-	/// <visibility>internal</visibility>
-	[FieldOffset(0)]
-	internal MouseInput Mouse;
+    /// <summary>
+    /// The <see cref="T:AutoTyper.DeviceEmulator.Native.MouseInput" /> definition.
+    /// </summary>
+    /// <visibility>internal</visibility>
+    [FieldOffset(0)]
+    internal MouseInput Mouse;
 
-	/// <summary>
-	/// The <see cref="T:AutoTyper.DeviceEmulator.Native.KeybdInput" /> definition.
-	/// </summary>
-	/// <visibility>internal</visibility>
-	[FieldOffset(0)]
-	internal KeybdInput Keyboard;
+    /// <summary>
+    /// The <see cref="T:AutoTyper.DeviceEmulator.Native.KeybdInput" /> definition.
+    /// </summary>
+    /// <visibility>internal</visibility>
+    [FieldOffset(0)]
+    internal KeybdInput Keyboard;
 
-	/// <summary>
-	/// The <see cref="T:AutoTyper.DeviceEmulator.Native.HardwareInput" /> definition.
-	/// </summary>
-	/// <visibility>internal</visibility>
-	[FieldOffset(0)]
-	internal HardwareInput Hardware;
+    /// <summary>
+    /// The <see cref="T:AutoTyper.DeviceEmulator.Native.HardwareInput" /> definition.
+    /// </summary>
+    /// <visibility>internal</visibility>
+    [FieldOffset(0)]
+    internal HardwareInput Hardware;
 
-	/// <summary>
-	/// Provide string output of the <see cref="T:AutoTyper.DeviceEmulator.Native.MouseKeybdHardwareInput" /> content.
-	/// </summary>
-	/// <returns></returns>
-	/// <visibility>public</visibility>
-	public override string ToString()
-	{
-		return Mouse.ToString() + Keyboard.ToString() + Hardware;
-	}
+    /// <summary>
+    /// Provide string output of the <see cref="T:AutoTyper.DeviceEmulator.Native.MouseKeybdHardwareInput" /> content.
+    /// </summary>
+    /// <returns></returns>
+    /// <visibility>public</visibility>
+    public override string ToString()
+    {
+        return Mouse.ToString() + Keyboard.ToString() + Hardware;
+    }
 }

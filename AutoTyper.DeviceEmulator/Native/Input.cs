@@ -43,19 +43,19 @@ namespace AutoTyper.DeviceEmulator.Native;
 /// </revisionhistory>
 internal struct Input
 {
-	/// <summary>
-	/// Specifies the type of the input event. This member can be one of the following values. 
-	/// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Mouse" /> The event is a mouse event. Use the mi structure of the union.
-	/// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Keyboard" /> The event is a keyboard event. Use the ki structure of the union.
-	/// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Hardware" /> Windows 95/98/Me: The event is from input hardware other than a 
-	/// keyboard or mouse. Use the hi structure of the union.
-	/// </summary>
-	/// <visibility>internal</visibility>
-	internal uint Type;
+    /// <summary>
+    /// Specifies the type of the input event. This member can be one of the following values. 
+    /// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Mouse" /> The event is a mouse event. Use the mi structure of the union.
+    /// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Keyboard" /> The event is a keyboard event. Use the ki structure of the union.
+    /// <see cref="F:AutoTyper.DeviceEmulator.Native.InputType.Hardware" /> Windows 95/98/Me: The event is from input hardware other than a 
+    /// keyboard or mouse. Use the hi structure of the union.
+    /// </summary>
+    /// <visibility>internal</visibility>
+    internal uint Type;
 
-	/// <summary>
-	/// The data structure that contains information about the simulated Mouse, Keyboard or Hardware event.
-	/// </summary>
-	/// <visibility>internal</visibility>
-	internal MouseKeybdHardwareInput Data;
+    /// <summary>
+    /// The data structure that contains information about the simulated Mouse, Keyboard or Hardware event.
+    /// </summary>
+    /// <visibility>internal</visibility>
+    internal MouseKeybdHardwareInput Data;
 }
