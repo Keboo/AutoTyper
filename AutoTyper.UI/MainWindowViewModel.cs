@@ -20,6 +20,12 @@ public enum DialogResult
     Confirmed,
 }
 
+public enum ViewMode
+{
+    Full,
+    Compact
+}
+
 public partial class MainWindowViewModel : ObservableObject, IDropTarget
 {
     private readonly SnippetStorageService _storageService;
@@ -31,6 +37,9 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
 
     [ObservableProperty]
     private bool _isDarkMode;
+
+    [ObservableProperty]
+    private ViewMode _currentViewMode = ViewMode.Full;
 
     public ObservableCollection<Snippet> Snippets { get; } = [];
 
@@ -215,6 +224,12 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
         _themeService.ToggleTheme();
         IsDarkMode = _themeService.IsDarkMode;
         StatusMessage = $"Switched to {(IsDarkMode ? "dark" : "light")} mode";
+    }
+
+    [RelayCommand]
+    private void SetViewMode(ViewMode mode)
+    {
+        CurrentViewMode = mode;
     }
 
     // IDropTarget implementation for drag-drop reordering
