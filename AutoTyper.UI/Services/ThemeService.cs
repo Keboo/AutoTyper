@@ -11,13 +11,18 @@ public class ThemeService
         "AutoTyper",
         "settings.json");
 
-    public bool IsDarkMode { get; private set; }
+    public virtual bool IsDarkMode { get; private set; }
 
     public ThemeService()
     {
         // Load saved theme preference or default to light mode
         IsDarkMode = LoadThemePreference();
-        ApplyTheme(IsDarkMode);
+        
+        // Only apply theme if we're in a WPF application context
+        if (System.Windows.Application.Current != null)
+        {
+            ApplyTheme(IsDarkMode);
+        }
     }
 
     public void ToggleTheme()

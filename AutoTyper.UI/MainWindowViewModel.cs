@@ -44,6 +44,10 @@ public partial class MainWindowViewModel : ObservableObject
         TypingService typingService,
         ThemeService themeService)
     {
+        ArgumentNullException.ThrowIfNull(storageService);
+        ArgumentNullException.ThrowIfNull(typingService);
+        ArgumentNullException.ThrowIfNull(themeService);
+        
         _storageService = storageService;
         _typingService = typingService;
         _themeService = themeService;
