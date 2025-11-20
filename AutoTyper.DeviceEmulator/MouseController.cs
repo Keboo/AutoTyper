@@ -437,7 +437,6 @@ public sealed class MouseController : BaseController
     public static System.Drawing.Point PhysicalToLogicalPoint(System.Drawing.Point aPoint)
     {
         System.Drawing.Point aPoint2 = aPoint;
-        bool flag = true;
         SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint2);
         return aPoint2;
     }
@@ -469,7 +468,6 @@ public sealed class MouseController : BaseController
     public static System.Drawing.Point LogicalToPhysicalPoint(System.Drawing.Point aPoint)
     {
         System.Drawing.Point aPoint2 = aPoint;
-        bool flag = true;
         SafeNativeMethods.LogicalToPhysicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint2);
         return aPoint2;
     }

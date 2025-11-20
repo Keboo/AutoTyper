@@ -9,6 +9,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <RootNamespace>AutoTyper.DeviceEmulator</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Nullable>disable</Nullable>
     <Description>Device emulator library for keyboard and mouse control and observation. Converted from Henooh.DeviceEmulator to fix bugs and add custom functionality.</Description>
   </PropertyGroup>
 

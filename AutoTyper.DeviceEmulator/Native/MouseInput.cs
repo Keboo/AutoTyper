@@ -95,6 +95,7 @@ internal struct MouseInput
     /// Time stamp for the event, in milliseconds. If this parameter is 0, the system will provide its own 
     /// time stamp. 
     /// </summary>
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
     internal uint Time;
 
     /// <summary>
@@ -102,4 +103,5 @@ internal struct MouseInput
     /// to obtain this extra information. 
     /// </summary>
     internal IntPtr ExtraInfo;
+#pragma warning restore CS0649
 }
