@@ -63,7 +63,42 @@ public class KeyboardController : BaseController
         { ' ', VirtualKeyCode.SPACE },
         { '\n', VirtualKeyCode.RETURN },
         { '\r', VirtualKeyCode.RETURN },
-        { '\t', VirtualKeyCode.TAB }
+        { '\t', VirtualKeyCode.TAB },
+        // Punctuation - unshifted
+        { ';', VirtualKeyCode.OEM_1 },
+        { '=', VirtualKeyCode.OEM_PLUS },
+        { ',', VirtualKeyCode.OEM_COMMA },
+        { '-', VirtualKeyCode.OEM_MINUS },
+        { '.', VirtualKeyCode.OEM_PERIOD },
+        { '/', VirtualKeyCode.OEM_2 },
+        { '`', VirtualKeyCode.OEM_3 },
+        { '[', VirtualKeyCode.OEM_4 },
+        { '\\', VirtualKeyCode.OEM_5 },
+        { ']', VirtualKeyCode.OEM_6 },
+        { '\'', VirtualKeyCode.OEM_7 },
+        // Punctuation - shifted (require Shift key)
+        { ':', VirtualKeyCode.OEM_1 },
+        { '+', VirtualKeyCode.OEM_PLUS },
+        { '<', VirtualKeyCode.OEM_COMMA },
+        { '_', VirtualKeyCode.OEM_MINUS },
+        { '>', VirtualKeyCode.OEM_PERIOD },
+        { '?', VirtualKeyCode.OEM_2 },
+        { '~', VirtualKeyCode.OEM_3 },
+        { '{', VirtualKeyCode.OEM_4 },
+        { '|', VirtualKeyCode.OEM_5 },
+        { '}', VirtualKeyCode.OEM_6 },
+        { '"', VirtualKeyCode.OEM_7 },
+        // Shifted numbers
+        { ')', VirtualKeyCode.VK_0 },
+        { '!', VirtualKeyCode.VK_1 },
+        { '@', VirtualKeyCode.VK_2 },
+        { '#', VirtualKeyCode.VK_3 },
+        { '$', VirtualKeyCode.VK_4 },
+        { '%', VirtualKeyCode.VK_5 },
+        { '^', VirtualKeyCode.VK_6 },
+        { '&', VirtualKeyCode.VK_7 },
+        { '*', VirtualKeyCode.VK_8 },
+        { '(', VirtualKeyCode.VK_9 }
     };
 
     /// <summary>
@@ -171,14 +206,7 @@ public class KeyboardController : BaseController
         foreach (char c in array)
         {
             num3++;
-            if (char.IsUpper(c))
-            {
-                TypeChar(c, aShiftDown: true);
-            }
-            else
-            {
-                TypeChar(c, aShiftDown: false);
-            }
+            TypeChar(c, RequiresShift(c));
             if ((aInterval != 0 || naturalTyping) && num3 < aString.Length)
             {
                 if (naturalTyping)
@@ -191,6 +219,27 @@ public class KeyboardController : BaseController
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Determines if a character requires the Shift key to be pressed.
+    /// </summary>
+    /// <param name="c">The character to check.</param>
+    /// <returns>True if Shift is required, false otherwise.</returns>
+    /// <visibility>private</visibility>
+    private static bool RequiresShift(char c)
+    {
+        // Uppercase letters
+        if (char.IsUpper(c))
+            return true;
+
+        // Shifted punctuation and symbols (US keyboard layout)
+        return c switch
+        {
+            '!' or '@' or '#' or '$' or '%' or '^' or '&' or '*' or '(' or ')' => true, // Shifted numbers
+            ':' or '+' or '<' or '_' or '>' or '?' or '~' or '{' or '|' or '}' or '"' => true, // Shifted punctuation
+            _ => false
+        };
     }
 
     /// <summary>

@@ -1,5 +1,10 @@
 using System.Runtime.InteropServices;
+
+using AutoTyper.DeviceEmulator;
+using AutoTyper.DeviceEmulator.Native;
 using AutoTyper.UI.Models;
+
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AutoTyper.UI.Services;
 
@@ -23,21 +28,22 @@ public class TypingService
             await Task.Delay(TimeSpan.FromSeconds(snippet.Delay), cancellationToken);
         }
 
-        // Get the active window before typing
-        IntPtr activeWindow = NativeMethods.GetForegroundWindow();
-
         // Type the content using the keyboard controller
-        Henooh.DeviceEmulator.KeyboardController kc = new(cancellationToken);
+        KeyboardController kc = new(cancellationToken);
         if (snippet.FastTyping)
         {
-            kc.NaturalTypingFlag = false;
+            kc.TypeString(snippet.Content);
+
         }
-        kc.TypeString(snippet.Content);
+        else
+        {
+            kc.TypeStringNaturally(snippet.Content, snippet.Content.Length * 60);
+        }
 
         // Append new line if requested
         if (snippet.AppendNewLine)
         {
-            kc.Type(Henooh.DeviceEmulator.Native.VirtualKeyCode.RETURN);
+            kc.Type(VirtualKeyCode.RETURN);
         }
     }
 
