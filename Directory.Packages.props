@@ -34,6 +34,7 @@
     <PackageVersion Include="Moq.AutoMock" Version="3.5.0" />
     <PackageVersion Include="System.CommandLine" Version="2.0.0" />
     <PackageVersion Include="TextCopy" Version="6.2.1" />
+    <PackageVersion Include="Velopack" Version="0.0.1369-g1d5c984" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

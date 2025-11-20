@@ -25,5 +25,6 @@
     <PackageReference Include="MaterialDesignThemes" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Velopack" />
   </ItemGroup>
 </Project>
