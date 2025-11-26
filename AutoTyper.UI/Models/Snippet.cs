@@ -21,4 +21,7 @@ public partial class Snippet : ObservableObject
 
     [ObservableProperty]
     private int _order;
+
+    [ObservableProperty]
+    private bool _useClipboard;
 }

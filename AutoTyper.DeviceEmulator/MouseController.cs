@@ -34,26 +34,22 @@ namespace AutoTyper.DeviceEmulator;
 /// }
 /// </code>
 /// </example>
-/// <visibility>public</visibility>
 public sealed class MouseController : BaseController
 {
     /// <summary>
     /// Provides DesktopWidth to calculate dimensions of movable space.
     /// </summary>
-    /// <visibility>private</visibility>
     private int DesktopWidth { get; set; }
 
     /// <summary>
     /// Provides DesktopHight to calculate dimensions of movable space.
     /// </summary>
-    /// <visibility>private</visibility>
     private int DesktopHeight { get; set; }
 
     /// <summary>
     /// Provides if the coordinates to move mouse is based on physical location if set true,
     /// and based on logical location if set false.
     /// </summary>
-    /// <visibility>public</visibility>
     [Obsolete("Use UseLogicalCoordinate property. Made obsolete in v1.1.8")]
     public bool PhysicalToLogicalMoveMode { get; set; }
 
@@ -75,7 +71,6 @@ public sealed class MouseController : BaseController
     /// MouseController mouse = new MouseController();
     /// </code>
     /// </example>
-    /// <visibility>public</visibility>
     public MouseController()
     {
         DesktopWidth = SystemInfo.PrimaryMonitorSize.Width;
@@ -86,10 +81,9 @@ public sealed class MouseController : BaseController
     /// Initializes a new instance of the <see cref="T:AutoTyper.DeviceEmulator.MouseController" /> with
     /// <see cref="T:System.Threading.CancellationToken" /> as a parameter.
     /// </summary>
-    /// <param name="aCancellationToken"></param>
-    /// <visibility>public</visibility>
-    public MouseController(CancellationToken aCancellationToken)
-        : base(aCancellationToken)
+    /// <param name="cancellationToken"></param>
+    public MouseController(CancellationToken cancellationToken)
+        : base(cancellationToken)
     {
         DesktopWidth = SystemInfo.PrimaryMonitorSize.Width;
         DesktopHeight = SystemInfo.PrimaryMonitorSize.Height;
@@ -98,7 +92,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Provides all Screen display information.
     /// </summary>
-    /// <visibility>public</visibility>
     public static void ShowDisplayInfo()
     {
         ScreenInfo[] allScreens = ScreenInfo.AllScreens;
@@ -130,24 +123,23 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Provides a way to generate an inputBuffer and sends to native SendInput method.
     /// </summary>
-    /// <param name="aMouseFlag"></param>
-    /// <param name="aScrollAmount"></param>
-    /// <visibility>private</visibility>
-    private void SendMouseInput(uint aMouseFlag, uint aScrollAmount = 0u)
+    /// <param name="mouseFlag"></param>
+    /// <param name="scrollAmount"></param>
+    private void SendMouseInput(uint mouseFlag, uint scrollAmount = 0u)
     {
         inputBuffer = new Input
         {
             Type = 0u
         };
-        inputBuffer.Data.Mouse.Flags = aMouseFlag;
-        if (aScrollAmount != 0)
+        inputBuffer.Data.Mouse.Flags = mouseFlag;
+        if (scrollAmount != 0)
         {
-            inputBuffer.Data.Mouse.MouseData = aScrollAmount;
+            inputBuffer.Data.Mouse.MouseData = scrollAmount;
         }
-        inputList = new List<Input> { inputBuffer };
-        if (base.RunMode == 0)
+        inputList = [inputBuffer];
+        if (RunMode == 0)
         {
-            SafeNativeMethods.SendInput(1u, inputList.ToArray(), Marshal.SizeOf(typeof(Input)));
+            _ = SafeNativeMethods.SendInput(1u, [.. inputList], Marshal.SizeOf<Input>());
         }
         inputList.Clear();
     }
@@ -163,11 +155,10 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates pressing down on a mouse button.
     /// </summary>
-    /// <param name="aMouseButton"></param>
-    /// <visibility>public</visibility>
-    public void ButtonDown(MouseButton aMouseButton)
+    /// <param name="mouseButton"></param>
+    public void ButtonDown(MouseButton mouseButton)
     {
-        switch (aMouseButton)
+        switch (mouseButton)
         {
             case MouseButton.Left:
                 SendMouseInput(2u);
@@ -199,11 +190,10 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates releasing up a mouse button.
     /// </summary>
-    /// <param name="aMouseButton"></param>
-    /// <visibility>public</visibility>
-    public void ButtonUp(MouseButton aMouseButton)
+    /// <param name="mouseButton"></param>
+    public void ButtonUp(MouseButton mouseButton)
     {
-        switch (aMouseButton)
+        switch (mouseButton)
         {
             case MouseButton.Left:
                 SendMouseInput(4u);
@@ -227,30 +217,26 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates clicking a mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
-    public void Click()
+    public Task ClickAsync()
     {
-        Click(MouseButton.Left);
+        return ClickAsync(MouseButton.Left);
     }
 
     /// <summary>
     /// Emulates clicking a mouse button.
     /// </summary>
     /// <param name="aMouseButton"></param>
-    /// <visibility>public</visibility>
-    public void Click(MouseButton aMouseButton)
+    public async Task ClickAsync(MouseButton aMouseButton)
     {
-        Random random = new Random();
-        int num = random.Next(0, 20);
+        int num = Random.Shared.Next(0, 20);
         ButtonDown(aMouseButton);
-        Sleep(num + 30);
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 30));
         ButtonUp(aMouseButton);
     }
 
     /// <summary>
     /// Emulates pressing down on a left mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void LeftDown()
     {
         ButtonDown();
@@ -259,7 +245,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates releasing a left mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void LeftUp()
     {
         ButtonUp();
@@ -268,7 +253,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates pressing down on a right mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void RightDown()
     {
         ButtonDown(MouseButton.Right);
@@ -277,7 +261,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates releasing a right mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void RightUp()
     {
         ButtonUp(MouseButton.Right);
@@ -286,7 +269,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates pressing down on a middle mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void MiddleDown()
     {
         ButtonDown(MouseButton.Middle);
@@ -295,7 +277,6 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates releasing a middle mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
     public void MiddleUp()
     {
         ButtonUp(MouseButton.Middle);
@@ -304,21 +285,19 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates scrolling down on a mouse wheel towards the user.
     /// </summary>
-    /// <visibility>public</visibility>
     public void WheelDown()
     {
-        int aScrollAmount = -120;
-        SendMouseInput(2048u, (uint)aScrollAmount);
+        int scrollAmount = -120;
+        SendMouseInput(2048u, (uint)scrollAmount);
     }
 
     /// <summary>
     /// Emulates scrolling up on a mouse wheel away from the user.
     /// </summary>
-    /// <visibility>public</visibility>
     public void WheelUp()
     {
-        int aScrollAmount = 120;
-        SendMouseInput(2048u, (uint)aScrollAmount);
+        int scrollAmount = 120;
+        SendMouseInput(2048u, (uint)scrollAmount);
     }
 
     /// <summary>
@@ -327,14 +306,13 @@ public sealed class MouseController : BaseController
     /// <remarks>
     /// This method is supported on operating systems greater than Windows 8.1.
     /// </remarks>
-    /// <param name="aPoint"></param>
+    /// <param name="point"></param>
     /// <returns></returns>
-    /// <visibility>public</visibility>
-    public static System.Drawing.Point PhysicalToLogicalPoint(System.Drawing.Point aPoint)
+    public static System.Drawing.Point PhysicalToLogicalPoint(System.Drawing.Point point)
     {
-        System.Drawing.Point aPoint2 = aPoint;
-        SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint2);
-        return aPoint2;
+        System.Drawing.Point point2 = point;
+        SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out point2);
+        return point2;
     }
 
     /// <summary>
@@ -343,13 +321,13 @@ public sealed class MouseController : BaseController
     /// <remarks>
     /// This method is supported on operating systems greater than Windows 8.1.
     /// </remarks>
-    /// <param name="aPoint">Accepts <see cref="T:System.Windows.Point" /> as a parameter.</param>
+    /// <param name="point">Accepts <see cref="T:System.Windows.Point" /> as a parameter.</param>
     /// <returns></returns>
-    public static System.Windows.Point PhysicalToLogicalPoint(System.Windows.Point aPoint)
+    public static System.Windows.Point PhysicalToLogicalPoint(System.Windows.Point point)
     {
-        System.Drawing.Point aPoint2 = new System.Drawing.Point((int)aPoint.X, (int)aPoint.Y);
-        aPoint2 = PhysicalToLogicalPoint(aPoint2);
-        return new System.Windows.Point(aPoint2.X, aPoint2.Y);
+        System.Drawing.Point point2 = new((int)point.X, (int)point.Y);
+        point2 = PhysicalToLogicalPoint(point2);
+        return new System.Windows.Point(point2.X, point2.Y);
     }
 
     /// <summary>
@@ -358,14 +336,14 @@ public sealed class MouseController : BaseController
     /// <remarks>
     /// This method is supported on operating systems greater than Windows 8.1.
     /// </remarks>
-    /// <param name="aPoint">Accepts <see cref="T:System.Drawing.Point" /> as a parameter.</param>
+    /// <param name="point">Accepts <see cref="T:System.Drawing.Point" /> as a parameter.</param>
     /// <returns></returns>
     /// <visibility>public</visibility>
-    public static System.Drawing.Point LogicalToPhysicalPoint(System.Drawing.Point aPoint)
+    public static System.Drawing.Point LogicalToPhysicalPoint(System.Drawing.Point point)
     {
-        System.Drawing.Point aPoint2 = aPoint;
-        SafeNativeMethods.LogicalToPhysicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint2);
-        return aPoint2;
+        System.Drawing.Point point2 = point;
+        SafeNativeMethods.LogicalToPhysicalPointForPerMonitorDPI(IntPtr.Zero, out point2);
+        return point2;
     }
 
     /// <summary>
@@ -374,24 +352,23 @@ public sealed class MouseController : BaseController
     /// <remarks>
     /// This method is supported on operating systems greater than Windows 8.1.
     /// </remarks>
-    /// <param name="aPoint">Accepts <see cref="T:System.Windows.Point" /> as a parameter.</param>
+    /// <param name="point">Accepts <see cref="T:System.Windows.Point" /> as a parameter.</param>
     /// <returns></returns>
-    public static System.Windows.Point LogicalToPhysicalPoint(System.Windows.Point aPoint)
+    public static System.Windows.Point LogicalToPhysicalPoint(System.Windows.Point point)
     {
-        System.Drawing.Point aPoint2 = new System.Drawing.Point((int)aPoint.X, (int)aPoint.Y);
-        aPoint2 = LogicalToPhysicalPoint(aPoint2);
-        return new System.Windows.Point(aPoint2.X, aPoint2.Y);
+        System.Drawing.Point point2 = new((int)point.X, (int)point.Y);
+        point2 = LogicalToPhysicalPoint(point2);
+        return new System.Windows.Point(point2.X, point2.Y);
     }
 
     /// <summary>
     /// Emulates instantly moving a cursor to an absolute position on the desktop using x and y coordinates.
     /// </summary>
-    /// <param name="aX">integer value of x coordinate of cursor destination</param>
-    /// <param name="aY">integer value of y coordinate of cursor destination</param>
-    /// <visibility>public</visibility>
-    public void AbsoluteSinglePointMove(int aX, int aY)
+    /// <param name="x">integer value of x coordinate of cursor destination</param>
+    /// <param name="y">integer value of y coordinate of cursor destination</param>
+    public void AbsoluteSinglePointMove(int x, int y)
     {
-        System.Drawing.Point aPoint = new System.Drawing.Point(aX, aY);
+        System.Drawing.Point aPoint = new(x, y);
         if (UseLogicalCoordinate)
         {
             SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint);
@@ -403,47 +380,47 @@ public sealed class MouseController : BaseController
         inputBuffer.Data.Mouse.Flags = 32769u;
         inputBuffer.Data.Mouse.X = (int)(65535f * (float)aPoint.X / (float)DesktopWidth);
         inputBuffer.Data.Mouse.Y = (int)(65535f * (float)aPoint.Y / (float)DesktopHeight);
-        inputList = new List<Input> { inputBuffer };
-        if (base.RunMode == 0)
+        inputList = [inputBuffer];
+        if (RunMode == 0)
         {
-            SafeNativeMethods.SendInput((uint)inputList.Count, inputList.ToArray(), Marshal.SizeOf(typeof(Input)));
+            _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
         }
     }
 
     /// <summary>
     ///
     /// </summary>
-    /// <param name="aX"></param>
-    /// <param name="aY"></param>
-    public void RelativeMoveSendInput(int aX, int aY)
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void RelativeMoveSendInput(int x, int y)
     {
-        System.Drawing.Point aPoint = new System.Drawing.Point(aX, aY);
+        System.Drawing.Point point = new(x, y);
         if (UseLogicalCoordinate)
         {
-            SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out aPoint);
+            SafeNativeMethods.PhysicalToLogicalPointForPerMonitorDPI(IntPtr.Zero, out point);
         }
         inputBuffer = new Input
         {
             Type = 0u
         };
         inputBuffer.Data.Mouse.Flags = 1u;
-        inputBuffer.Data.Mouse.X = aX;
-        inputBuffer.Data.Mouse.Y = aY;
-        inputList = new List<Input> { inputBuffer };
-        if (base.RunMode == 0)
+        inputBuffer.Data.Mouse.X = x;
+        inputBuffer.Data.Mouse.Y = y;
+        inputList = [inputBuffer];
+        if (RunMode == 0)
         {
-            SafeNativeMethods.SendInput((uint)inputList.Count, inputList.ToArray(), Marshal.SizeOf(typeof(Input)));
+            _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
         }
     }
 
     /// <summary>
     /// Emulates instantly moving a cursor to an absolute position on the desktop using System.Drawing.Point.
     /// </summary>
-    /// <param name="aDestination">System.Drawing.Point method of a Destination</param>
+    /// <param name="destination">System.Drawing.Point method of a Destination</param>
     /// <visibility>public</visibility>
-    public void AbsoluteSinglePointMove(System.Drawing.Point aDestination)
+    public void AbsoluteSinglePointMove(System.Drawing.Point destination)
     {
-        AbsoluteSinglePointMove(aDestination.X, aDestination.Y);
+        AbsoluteSinglePointMove(destination.X, destination.Y);
     }
 
     /// <summary>
@@ -451,22 +428,22 @@ public sealed class MouseController : BaseController
     /// The backend of Mouse movement uses a Logical coordinate system.
     /// If you want to move to a physical location, it would have to convert to Logical destination.
     /// </summary>
-    /// <param name="aDestinationX"></param>
-    /// <param name="aDestinationY"></param>
-    /// <param name="aOffsetAccuracy"></param>
-    public void Move(int aDestinationX, int aDestinationY, int aOffsetAccuracy = 0)
+    /// <param name="destinationX"></param>
+    /// <param name="destinationY"></param>
+    /// <param name="offsetAccuracy"></param>
+    public async Task MoveAsync(int destinationX, int destinationY, int offsetAccuracy = 0)
     {
-        System.Drawing.Point point = new System.Drawing.Point(int.MinValue, int.MinValue);
-        if (aOffsetAccuracy < 0)
+        System.Drawing.Point point = new(int.MinValue, int.MinValue);
+        if (offsetAccuracy < 0)
         {
             throw new ArgumentOutOfRangeException(string.Format(CultureInfo.CurrentCulture, "aOffsetAccuracy can not be negative."));
         }
-        System.Drawing.Point point2 = new System.Drawing.Point(aDestinationX, aDestinationY);
+        System.Drawing.Point point2 = new(destinationX, destinationY);
         if (!UseLogicalCoordinate)
         {
             point2 = PhysicalToLogicalPoint(new System.Drawing.Point(point2.X, point2.Y));
         }
-        while (point.X < point2.X - aOffsetAccuracy || point.X > point2.X + aOffsetAccuracy || point.Y < point2.Y - aOffsetAccuracy || point.Y > point2.Y + aOffsetAccuracy)
+        while (point.X < point2.X - offsetAccuracy || point.X > point2.X + offsetAccuracy || point.Y < point2.Y - offsetAccuracy || point.Y > point2.Y + offsetAccuracy)
         {
             point = CursorHelper.Position;
             int num = point2.X - point.X;
@@ -480,51 +457,49 @@ public sealed class MouseController : BaseController
                 num2 = num2 / 10 + ((num2 > 0) ? 1 : (-1));
             }
             RelativeMoveSendInput(num, num2);
-            Sleep(20);
+            await DelayAsync(TimeSpan.FromMilliseconds(20));
         }
     }
 
     /// <summary>
     /// Emulates naturally moving a cursor to a position on the desktop.
     /// </summary>
-    /// <param name="aDestinationX">integer value of x coordinate of cursor destination</param>
-    /// <param name="aDestinationY">integer value of y coordinate of cursor destination</param>
-    /// <param name="aMovementVelocityLogFactor">velocity of pixel displacement factor based on intervals</param>
-    /// <visibility>public</visibility>
-    public void AbsoluteMove(int aDestinationX, int aDestinationY, double aMovementVelocityLogFactor = 1.0)
+    /// <param name="destinationX">integer value of x coordinate of cursor destination</param>
+    /// <param name="destinationY">integer value of y coordinate of cursor destination</param>
+    /// <param name="movementVelocityLogFactor">velocity of pixel displacement factor based on intervals</param>
+    public async Task AbsoluteMoveAsync(int destinationX, int destinationY, double movementVelocityLogFactor = 1.0)
     {
         int x = CursorHelper.Position.X;
         int y = CursorHelper.Position.Y;
-        double a = Math.Sqrt((aDestinationX - x) * (aDestinationX - x) + (aDestinationY - y) * (aDestinationY - y));
-        int num = (int)Math.Log(a, 1.001 + 1.0 * aMovementVelocityLogFactor) + 5;
+        double a = Math.Sqrt((destinationX - x) * (destinationX - x) + (destinationY - y) * (destinationY - y));
+        int num = (int)Math.Log(a, 1.001 + 1.0 * movementVelocityLogFactor) + 5;
         double num2 = x;
         double num3 = y;
         for (int i = 1; i < num; i++)
         {
             double num4 = Math.Sin((double)i / (double)num * Math.PI) * 1.57;
-            num2 += num4 * (double)(aDestinationX - x) / (double)num;
-            num3 += num4 * (double)(aDestinationY - y) / (double)num;
+            num2 += num4 * (double)(destinationX - x) / (double)num;
+            num3 += num4 * (double)(destinationY - y) / (double)num;
             if (i == num)
             {
-                num2 = aDestinationX;
-                num3 = aDestinationY;
+                num2 = destinationX;
+                num3 = destinationY;
             }
             AbsoluteSinglePointMove((int)num2, (int)num3);
-            Sleep(30);
+            await DelayAsync(TimeSpan.FromMilliseconds(30));
         }
-        AbsoluteSinglePointMove(aDestinationX, aDestinationY);
-        Sleep(5);
+        AbsoluteSinglePointMove(destinationX, destinationY);
+        await DelayAsync(TimeSpan.FromMilliseconds(5));
     }
 
     /// <summary>
     /// Emulates naturally moving a cursor to a position on the desktop.
     /// </summary>
-    /// <param name="aDestination">System.Drawing.Point coordinate of cursor destination</param>
-    /// <param name="aOffsetAccuracy"></param>
-    /// <visibility>public</visibility>
-    public void Move(System.Drawing.Point aDestination, int aOffsetAccuracy = 0)
+    /// <param name="destination">System.Drawing.Point coordinate of cursor destination</param>
+    /// <param name="offsetAccuracy"></param>
+    public Task MoveAsync(System.Drawing.Point destination, int offsetAccuracy = 0)
     {
-        Move(aDestination.X, aDestination.Y, aOffsetAccuracy);
+        return MoveAsync(destination.X, destination.Y, offsetAccuracy);
     }
 
     /// <summary>
@@ -542,7 +517,6 @@ public sealed class MouseController : BaseController
     /// Emulates movement by a relative position.
     /// </summary>
     /// <param name="aDisplacement"></param>
-    /// <visibility>public</visibility>
     public void MoveRelative(System.Drawing.Point aDisplacement)
     {
         MoveRelative(aDisplacement.X, aDisplacement.Y);
@@ -551,65 +525,59 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates a natural mouse movement followed by a click.
     /// </summary>
-    /// <param name="aDestinationX">integer value of x coordinate of cursor destination</param>
-    /// <param name="aDestinationY">integer value of y coordinate of cursor destination</param>
-    /// <visibility>public</visibility>
-    public void MoveClick(int aDestinationX, int aDestinationY)
+    /// <param name="destinationX">integer value of x coordinate of cursor destination</param>
+    /// <param name="destinationY">integer value of y coordinate of cursor destination</param>
+    public async Task MoveClickAsync(int destinationX, int destinationY)
     {
-        Move(aDestinationX, aDestinationY);
-        Sleep(50);
-        Click();
+        await MoveAsync(destinationX, destinationY);
+        await DelayAsync(TimeSpan.FromMilliseconds(50));
+        await ClickAsync();
     }
 
     /// <summary>
     /// Emulates a natural mouse movement followed by a click.
     /// </summary>
-    /// <param name="aPoint">point of coordinate of cursor destination</param>
-    /// <visibility>public</visibility>
-    public void MoveClick(System.Drawing.Point aPoint)
+    /// <param name="point">point of coordinate of cursor destination</param>
+    public Task MoveClickAsync(System.Drawing.Point point)
     {
-        MoveClick(aPoint.X, aPoint.Y);
+        return MoveClickAsync(point.X, point.Y);
     }
 
     /// <summary>
     /// Emulates a natural mouse movement, follow by left button down, and a delay, followed up with a release.
     /// </summary>
-    /// <param name="aDestinationX"></param>
-    /// <param name="aDestinationY"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveClickHold(int aDestinationX, int aDestinationY, TimeSpan aWaitPeriod)
+    /// <param name="destinationX"></param>
+    /// <param name="destinationY"></param>
+    /// <param name="waitPeriod"></param>
+    public async Task MoveClickHoldAsync(int destinationX, int destinationY, TimeSpan waitPeriod)
     {
-        Random random = new Random();
-        int num = random.Next(5, 20);
-        Move(aDestinationX, aDestinationY);
+        int num = Random.Shared.Next(5, 20);
+        await MoveAsync(destinationX, destinationY);
         LeftDown();
-        Sleep(aWaitPeriod + TimeSpan.FromMilliseconds(num));
+        await DelayAsync(waitPeriod + TimeSpan.FromMilliseconds(num));
         LeftUp();
     }
 
     /// <summary>
     /// Emulates a natural mouse movement, follow by left button down, and a delay, followed up with a release.
     /// </summary>
-    /// <param name="aPoint"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveClickHold(System.Drawing.Point aPoint, TimeSpan aWaitPeriod)
+    /// <param name="point"></param>
+    /// <param name="waitPeriod"></param>
+    public Task MoveClickHoldAsync(System.Drawing.Point point, TimeSpan waitPeriod)
     {
-        MoveClickHold(aPoint.X, aPoint.Y, aWaitPeriod);
+        return MoveClickHoldAsync(point.X, point.Y, waitPeriod);
     }
 
     /// <summary>
     /// Emulate a natural mouse down of left and right down button, and a delay, 
     /// </summary>
-    /// <param name="aHoldPeriod"></param>
-    public void LeftRightClickHold(TimeSpan aHoldPeriod)
+    /// <param name="holdPeriod"></param>
+    public async Task LeftRightClickHoldAsync(TimeSpan holdPeriod)
     {
-        Random random = new Random();
-        int num = random.Next(5, 20);
+        int num = Random.Shared.Next(5, 20);
         ButtonDown(MouseButton.Left);
         ButtonDown(MouseButton.Right);
-        Sleep(aHoldPeriod + TimeSpan.FromMilliseconds(num));
+        await DelayAsync(holdPeriod + TimeSpan.FromMilliseconds(num));
         ButtonUp(MouseButton.Left);
         ButtonUp(MouseButton.Right);
     }
@@ -617,25 +585,23 @@ public sealed class MouseController : BaseController
     /// <summary>
     /// Emulates a natural mouse movement, follow by left button click and wait.
     /// </summary>
-    /// <param name="aDestinationX"></param>
-    /// <param name="aDestinationY"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveClickDelay(int aDestinationX, int aDestinationY, TimeSpan aWaitPeriod)
+    /// <param name="destinationX"></param>
+    /// <param name="destinationY"></param>
+    /// <param name="waitPeriod"></param>
+    public async Task MoveClickDelayAsync(int destinationX, int destinationY, TimeSpan waitPeriod)
     {
-        MoveClick(aDestinationX, aDestinationY);
-        Sleep(aWaitPeriod);
+        await MoveClickAsync(destinationX, destinationY);
+        await DelayAsync(waitPeriod);
     }
 
     /// <summary>
     /// Emulates a natural mouse movement, follow by left button click and wait.
     /// </summary>
-    /// <param name="aPoint"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveClickDelay(System.Drawing.Point aPoint, TimeSpan aWaitPeriod)
+    /// <param name="point"></param>
+    /// <param name="waitPeriod"></param>
+    public Task MoveClickDelayAsync(System.Drawing.Point point, TimeSpan waitPeriod)
     {
-        MoveClickDelay(aPoint.X, aPoint.Y, aWaitPeriod);
+        return MoveClickDelayAsync(point.X, point.Y, waitPeriod);
     }
 
     /// <summary>
@@ -643,91 +609,81 @@ public sealed class MouseController : BaseController
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveDelayClick(int x, int y, TimeSpan aWaitPeriod)
+    /// <param name="waitPeriod"></param>
+    public async Task MoveDelayClickAsync(int x, int y, TimeSpan waitPeriod)
     {
-        Move(x, y);
-        Sleep(aWaitPeriod);
-        Click();
+        await MoveAsync(x, y);
+        await DelayAsync(waitPeriod);
+        await ClickAsync();
     }
 
     /// <summary>
     /// Emulates a natural mouse movement which includes a delay beetween move and click action.
     /// </summary>
-    /// <param name="aPoint"></param>
-    /// <param name="aWaitPeriod"></param>
-    /// <visibility>public</visibility>
-    public void MoveDelayClick(System.Drawing.Point aPoint, TimeSpan aWaitPeriod)
+    /// <param name="point"></param>
+    /// <param name="waitPeriod"></param>
+    public Task MoveDelayClickAsync(System.Drawing.Point point, TimeSpan waitPeriod)
     {
-        MoveDelayClick(aPoint.X, aPoint.Y, aWaitPeriod);
+        return MoveDelayClickAsync(point.X, point.Y, waitPeriod);
     }
 
     /// <summary>
     /// Emulates double clicking Left mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
-    public void DoubleClick()
+    public async Task DoubleClickAsync()
     {
-        Random random = new Random();
-        int num = random.Next(0, 20);
-        Click();
-        Sleep(num + 35);
-        Click();
+        int num = Random.Shared.Next(0, 20);
+        await ClickAsync();
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await ClickAsync();
     }
 
     /// <summary>
     /// Emulates clicking Middle mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
-    public void MiddleClick()
+    public async Task MiddleClickAsync()
     {
-        Random random = new Random();
-        int num = random.Next(0, 20);
+        int num = Random.Shared.Next(0, 20);
         ButtonDown(MouseButton.Middle);
-        Sleep(num + 35);
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
         ButtonUp(MouseButton.Middle);
-        Sleep(num + 35);
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
     }
 
     /// <summary>
     /// Emulates clicking Right mouse button.
     /// </summary>
-    /// <visibility>public</visibility>
-    public void RightClick()
+    public async Task RightClickAsync()
     {
-        Random random = new Random();
-        int num = random.Next(0, 20);
+        int num = Random.Shared.Next(0, 20);
         ButtonDown(MouseButton.Right);
-        Sleep(num + 35);
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
         ButtonUp(MouseButton.Right);
-        Sleep(num + 35);
+        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
     }
 
     /// <summary>
     /// Emulates a drag and drop motion.
     /// </summary>
-    /// <param name="aOriginX">integer value of x coordinate of drag point</param>
-    /// <param name="aOriginY">integer value of x coordinate of drag point</param>
-    /// <param name="aDestinationX">integer value of x coordinate of drop destination</param>
-    /// <param name="aDestinationY">integer value of x coordinate of drop destination</param>
-    /// <visibility>public</visibility>
-    public void DragDrop(int aOriginX, int aOriginY, int aDestinationX, int aDestinationY)
+    /// <param name="originX">integer value of x coordinate of drag point</param>
+    /// <param name="originY">integer value of x coordinate of drag point</param>
+    /// <param name="destinationX">integer value of x coordinate of drop destination</param>
+    /// <param name="destinationY">integer value of x coordinate of drop destination</param>
+    public async Task DragDropAsync(int originX, int originY, int destinationX, int destinationY)
     {
-        AbsoluteMove(aOriginX, aOriginY);
+        await AbsoluteMoveAsync(originX, originY);
         LeftDown();
-        AbsoluteMove(aDestinationX, aDestinationY);
+        await AbsoluteMoveAsync(destinationX, destinationY);
         LeftUp();
     }
 
     /// <summary>
     /// Emulate a drag and drop motion.
     /// </summary>
-    /// <param name="aFirstPoint"></param>
-    /// <param name="aSecondPoint"></param>
-    /// <visibility>public</visibility>
-    public void DragDrop(System.Drawing.Point aFirstPoint, System.Drawing.Point aSecondPoint)
+    /// <param name="firstPoint"></param>
+    /// <param name="secondPoint"></param>
+    public Task DragDropAsync(System.Drawing.Point firstPoint, System.Drawing.Point secondPoint)
     {
-        DragDrop(aFirstPoint.X, aFirstPoint.Y, aSecondPoint.X, aSecondPoint.Y);
+        return DragDropAsync(firstPoint.X, firstPoint.Y, secondPoint.X, secondPoint.Y);
     }
 }

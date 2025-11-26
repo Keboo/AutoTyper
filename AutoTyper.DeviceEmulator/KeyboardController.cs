@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Threading.Tasks;
 
 using AutoTyper.DeviceEmulator.Native;
 
@@ -15,13 +12,11 @@ namespace AutoTyper.DeviceEmulator;
 /// KeyboardController provides methods that help simulate typing method,  including method that works like 
 /// a human types. 
 /// </remarks>
-/// <visibility>public</visibility>
 public class KeyboardController : BaseController
 {
     /// <summary>
     /// Returns a dictionary that contains the char key as the key and VirtualKeyCode as value.
     /// </summary>
-    /// <visibility>private</visibility>
     private static Dictionary<char, VirtualKeyCode> VirtualKeyCodeDictionary => new Dictionary<char, VirtualKeyCode>
     {
         { '0', VirtualKeyCode.VK_0 },
@@ -104,7 +99,6 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Initializes a new instance of the <see cref="T:AutoTyper.DeviceEmulator.KeyboardController" /> with no arguments.
     /// </summary>
-    /// <visibility>public</visibility>
     public KeyboardController()
     {
     }
@@ -112,111 +106,82 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Default constructor with CancellationToken.
     /// </summary>
-    /// <param name="aCancellationToken"></param>
-    /// <visibility>public</visibility>
-    public KeyboardController(CancellationToken aCancellationToken)
-        : base(aCancellationToken)
+    /// <param name="cancellationToken"></param>
+    public KeyboardController(CancellationToken cancellationToken)
+        : base(cancellationToken)
     {
     }
 
     /// <summary>
     /// Method that sends input to press and release the VirtualKeyCode. 
     /// </summary>
-    /// <param name="aVirtualKeyCode"></param>
-    /// <visibility>public</visibility>
-    public void Type(VirtualKeyCode aVirtualKeyCode)
+    /// <param name="virtualKeyCode"></param>
+    public void Type(VirtualKeyCode virtualKeyCode)
     {
         if (RunMode == 4)
         {
             return;
         }
-        PressKey(aVirtualKeyCode);
-        ReleaseKey(aVirtualKeyCode);
+        PressKey(virtualKeyCode);
+        ReleaseKey(virtualKeyCode);
     }
 
     /// <summary>
     /// Method that sends inputs to type a given string.
     /// </summary>
-    /// <param name="aString"></param>
-    /// <visibility>public</visibility>
-    public void TypeString(string aString)
+    /// <param name="string">The string to type</param>
+    public Task TypeStringAsync(string @string)
     {
-        TypeString(aString, 0, naturalTyping: false, 0, 0);
+        return TypeStringAsync(@string, TimeSpan.Zero, TimeSpan.Zero);
     }
 
     /// <summary>
     /// Method that sends inputs to type a given string with given interval.
     /// </summary>
-    /// <param name="aString"></param>
-    /// <param name="aInterval"></param>
-    /// <visibility>public</visibility>
-    public void TypeString(string aString, int aInterval)
+    /// <param name="string">The string to type</param>
+    /// <param name="keyStrokeDelay">The time between keystrokes</param>
+    public Task TypeStringAsync(string @string, TimeSpan keyStrokeDelay)
     {
-        TypeString(aString, aInterval, naturalTyping: false, 0, 0);
+        return TypeStringAsync(@string, keyStrokeDelay, TimeSpan.Zero);
     }
 
     /// <summary>
     /// Method that sends inputs to type a given string with natural typing interval.
     /// </summary>
-    /// <param name="aString"></param>
-    /// <param name="aWordPerMinute"></param>
-    /// <visibility>public</visibility>
-    public void TypeStringNaturally(string aString, int aWordPerMinute)
+    /// <param name="string"></param>
+    public Task TypeStringNaturallyAsync(string @string)
     {
-        TypeStringNaturally(aString, aWordPerMinute, 0);
+        return TypeStringAsync(@string, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(20));
     }
 
-    /// <summary>
-    /// Method that sends inputs to type a given string with natural typing interval.
-    /// Allows variance in typing speed.
-    /// </summary>
-    /// <param name="aString"></param>
-    /// <param name="aWordPerMinute"></param>
-    /// <param name="aPlusMinusVariance"></param>
-    /// <visibility>public</visibility>
-    public void TypeStringNaturally(string aString, int aWordPerMinute, int aPlusMinusVariance)
-    {
-        TypeString(aString, 0, naturalTyping: true, aWordPerMinute, aPlusMinusVariance);
-    }
 
     /// <summary>
     /// Method that sends inputs to type a given string.
     /// </summary>
-    /// <param name="aString"></param>
-    /// <param name="aInterval"></param>
-    /// <param name="naturalTyping"></param>
-    /// <param name="aWordPerMinute"></param>
-    /// <param name="aPlusMinusVariance"></param>
-    /// <visibility>public</visibility>
-    public void TypeString(string aString, int aInterval, bool naturalTyping, int aWordPerMinute, int aPlusMinusVariance)
+    /// <param name="string"></param>
+    /// <param name="keystrokeDelay">The amount of time between keystrokes</param>
+    /// <param name="keystrokeVariance">The amount of variance allowed between key stroke delay.</param>
+    public async Task TypeStringAsync(string @string, TimeSpan keystrokeDelay, TimeSpan keystrokeVariance)
     {
-        if (string.IsNullOrWhiteSpace(aString))
+        if (string.IsNullOrWhiteSpace(@string))
         {
             return;
         }
-        double num = 0.0;
-        if (naturalTyping)
-        {
-            double num2 = 60000.0 / ((double)aWordPerMinute * 5.0);
-            Random random = new Random();
-            num = num2 + (double)random.Next(-1 * aPlusMinusVariance, aPlusMinusVariance);
-        }
-        int num3 = 0;
-        char[] array = aString.ToCharArray();
+        int characterIndex = 0;
+        char[] array = @string.ToCharArray();
         foreach (char c in array)
         {
-            num3++;
+            characterIndex++;
             TypeChar(c, RequiresShift(c));
-            if ((aInterval != 0 || naturalTyping) && num3 < aString.Length)
+            if ((keystrokeDelay != TimeSpan.Zero || keystrokeVariance != TimeSpan.Zero) && characterIndex < @string.Length)
             {
-                if (naturalTyping)
+                TimeSpan delay = keystrokeDelay;
+                if (keystrokeVariance != TimeSpan.Zero)
                 {
-                    Sleep((int)num);
+                    int milliseconds = (int)Math.Round(keystrokeVariance.TotalMilliseconds);
+                    delay += TimeSpan.FromMilliseconds(Random.Shared.Next(-milliseconds, milliseconds));
                 }
-                else
-                {
-                    Sleep(aInterval);
-                }
+                await DelayAsync(delay);
             }
         }
     }
@@ -226,7 +191,6 @@ public class KeyboardController : BaseController
     /// </summary>
     /// <param name="c">The character to check.</param>
     /// <returns>True if Shift is required, false otherwise.</returns>
-    /// <visibility>private</visibility>
     private static bool RequiresShift(char c)
     {
         // Uppercase letters
@@ -245,15 +209,14 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Method that sends inputs to type an array of VirtualKeyCodes.
     /// </summary>
-    /// <param name="aVirtualKeyCodeArray"></param>
-    /// <visibility>public</visibility>
-    public void Type(params VirtualKeyCode[] aVirtualKeyCodeArray)
+    /// <param name="virtualKeyCodeArray"></param>
+    public void Type(params VirtualKeyCode[] virtualKeyCodeArray)
     {
         if (RunMode == 4)
         {
             return;
         }
-        foreach (VirtualKeyCode aVirtualKeyCode in aVirtualKeyCodeArray)
+        foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodeArray)
         {
             PressKey(aVirtualKeyCode);
             ReleaseKey(aVirtualKeyCode);
@@ -263,27 +226,26 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Method that sends inputs to type a char.
     /// </summary>
-    /// <param name="aChar"></param>
-    /// <param name="aShiftDown"></param>
-    /// <visibility>public</visibility>
-    public void TypeChar(char aChar, bool aShiftDown)
+    /// <param name="char"></param>
+    /// <param name="shiftDown"></param>
+    public void TypeChar(char @char, bool shiftDown)
     {
         if (RunMode == 4)
         {
             return;
         }
-        char key = char.ToLower(aChar);
+        char key = char.ToLower(@char);
         if (!VirtualKeyCodeDictionary.TryGetValue(key, out var value))
         {
             return;
         }
-        if (aShiftDown)
+        if (shiftDown)
         {
             PressKey(VirtualKeyCode.SHIFT);
         }
         PressKey(value);
         ReleaseKey(value);
-        if (aShiftDown)
+        if (shiftDown)
         {
             ReleaseKey(VirtualKeyCode.SHIFT);
         }
@@ -292,93 +254,88 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Method that simulates holding down of modifier key and pressing VirtualKeyCode.
     /// </summary>
-    /// <param name="aModifierVirtualKeyCode"></param>
-    /// <param name="aVirtualKeyCode"></param>
-    /// <visibility>public</visibility>
-    public void ModifiedKeyStroke(VirtualKeyCode aModifierVirtualKeyCode, VirtualKeyCode aVirtualKeyCode)
+    /// <param name="modifierVirtualKeyCode"></param>
+    /// <param name="virtualKeyCode"></param>
+    public void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
     {
         if (RunMode == 4)
         {
             return;
         }
-        PressKey(aModifierVirtualKeyCode);
-        PressKey(aVirtualKeyCode);
-        ReleaseKey(aVirtualKeyCode);
-        ReleaseKey(aModifierVirtualKeyCode);
+        PressKey(modifierVirtualKeyCode);
+        PressKey(virtualKeyCode);
+        ReleaseKey(virtualKeyCode);
+        ReleaseKey(modifierVirtualKeyCode);
     }
 
     /// <summary>
     /// Method that simulates holding down of modifier key and pressing VirtualKeyCode.
     /// </summary>
-    /// <param name="aModifierVirtualKeyCode"></param>
-    /// <param name="aVirtualKeyCodeArray"></param>
-    /// <visibility>public</visibility>
-    public void ModifiedKeyStroke(VirtualKeyCode aModifierVirtualKeyCode, params VirtualKeyCode[] aVirtualKeyCodeArray)
+    /// <param name="modifierVirtualKeyCode"></param>
+    /// <param name="virtualKeyCodes"></param>
+    public void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
     {
         if (RunMode == 4)
         {
             return;
         }
-        PressKey(aModifierVirtualKeyCode);
-        foreach (VirtualKeyCode aVirtualKeyCode in aVirtualKeyCodeArray)
+        PressKey(modifierVirtualKeyCode);
+        foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodes)
         {
             PressKey(aVirtualKeyCode);
             ReleaseKey(aVirtualKeyCode);
         }
-        ReleaseKey(aModifierVirtualKeyCode);
+        ReleaseKey(modifierVirtualKeyCode);
     }
 
     /// <summary>
     /// Method that simulates holding down of two modifier keys and pressing VirtualKeyCode.
     /// </summary>
-    /// <param name="aFirstModifierVirtualKeyCode"></param>
-    /// <param name="aSecondModifierVirtualKeyCode"></param>
-    /// <param name="aVirtualKeyCode"></param>
-    /// <visibility>public</visibility>
-    public void ModifiedKeyStroke(VirtualKeyCode aFirstModifierVirtualKeyCode, VirtualKeyCode aSecondModifierVirtualKeyCode, VirtualKeyCode aVirtualKeyCode)
+    /// <param name="firstModifierVirtualKeyCode"></param>
+    /// <param name="secondModifierVirtualKeyCode"></param>
+    /// <param name="virtualKeyCode"></param>
+    public void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
     {
         if (RunMode == 4)
         {
             return;
         }
-        PressKey(aFirstModifierVirtualKeyCode);
-        PressKey(aSecondModifierVirtualKeyCode);
-        PressKey(aVirtualKeyCode);
-        ReleaseKey(aVirtualKeyCode);
-        ReleaseKey(aSecondModifierVirtualKeyCode);
-        ReleaseKey(aFirstModifierVirtualKeyCode);
+        PressKey(firstModifierVirtualKeyCode);
+        PressKey(secondModifierVirtualKeyCode);
+        PressKey(virtualKeyCode);
+        ReleaseKey(virtualKeyCode);
+        ReleaseKey(secondModifierVirtualKeyCode);
+        ReleaseKey(firstModifierVirtualKeyCode);
     }
 
     /// <summary>
     /// Method that simulates holding down of two modifier keys and pressing VirtualKeyCodes.
     /// </summary>
-    /// <param name="aFirstModifierVirtualKeyCode"></param>
-    /// <param name="aSecondModifierVirtualKeyCode"></param>
-    /// <param name="aVirtualKeyCodeArray"></param>
-    /// <visibility>public</visibility>
-    public void ModifiedKeyStroke(VirtualKeyCode aFirstModifierVirtualKeyCode, VirtualKeyCode aSecondModifierVirtualKeyCode, params VirtualKeyCode[] aVirtualKeyCodeArray)
+    /// <param name="firstModifierVirtualKeyCode"></param>
+    /// <param name="secondModifierVirtualKeyCode"></param>
+    /// <param name="virtualKeyCodes"></param>
+    public void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
     {
         if (RunMode == 4)
         {
             return;
         }
-        PressKey(aFirstModifierVirtualKeyCode);
-        PressKey(aSecondModifierVirtualKeyCode);
-        foreach (VirtualKeyCode aVirtualKeyCode in aVirtualKeyCodeArray)
+        PressKey(firstModifierVirtualKeyCode);
+        PressKey(secondModifierVirtualKeyCode);
+        foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodes)
         {
             PressKey(aVirtualKeyCode);
             ReleaseKey(aVirtualKeyCode);
         }
-        ReleaseKey(aSecondModifierVirtualKeyCode);
-        ReleaseKey(aFirstModifierVirtualKeyCode);
+        ReleaseKey(secondModifierVirtualKeyCode);
+        ReleaseKey(firstModifierVirtualKeyCode);
     }
 
     /// <summary>
     /// Method that sends input to simulate a single key press event.
     /// </summary>
-    /// <param name="aVirtualKeyCode"></param>
-    /// <visibility>public</visibility>
-    public void PressKey(VirtualKeyCode aVirtualKeyCode)
+    /// <param name="virtualKeyCode"></param>
+    public void PressKey(VirtualKeyCode virtualKeyCode)
     {
         if (RunMode == 4)
         {
@@ -386,7 +343,7 @@ public class KeyboardController : BaseController
         }
         Input[] array = new Input[1];
         array[0].Type = 1u;
-        array[0].Data.Keyboard.KeyCode = (ushort)aVirtualKeyCode;
+        array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;
         array[0].Data.Keyboard.Scan = 0;
         array[0].Data.Keyboard.Flags = 0u;
         array[0].Data.Keyboard.Time = 0u;
@@ -397,9 +354,8 @@ public class KeyboardController : BaseController
     /// <summary>
     /// Method that sends input to simulate a single key release event.
     /// </summary>
-    /// <param name="aVirtualKeyCode"></param>
-    /// <visibility>public</visibility>
-    public void ReleaseKey(VirtualKeyCode aVirtualKeyCode)
+    /// <param name="virtualKeyCode"></param>
+    public void ReleaseKey(VirtualKeyCode virtualKeyCode)
     {
         if (RunMode == 4)
         {
@@ -407,7 +363,7 @@ public class KeyboardController : BaseController
         }
         Input[] array = new Input[1];
         array[0].Type = 1u;
-        array[0].Data.Keyboard.KeyCode = (ushort)aVirtualKeyCode;
+        array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;
         array[0].Data.Keyboard.Scan = 0;
         array[0].Data.Keyboard.Flags = 2u;
         array[0].Data.Keyboard.Time = 0u;
@@ -419,9 +375,8 @@ public class KeyboardController : BaseController
     /// Method called to send the Input in using SendInput.
     /// </summary>
     /// <param name="input"></param>
-    /// <visibility>private</visibility>
     private static void SendKeyEvent(Input[] input)
     {
-        uint num = SafeNativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf(typeof(Input)));
+        uint _ = SafeNativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf<Input>());
     }
 }
