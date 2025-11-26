@@ -17,27 +17,37 @@ public class TypingService
             throw new PlatformNotSupportedException("This feature only works on Windows");
         }
 
-        if (string.IsNullOrWhiteSpace(snippet.Content))
+        // Get the content to type - either from clipboard or snippet content
+        string contentToType = snippet.Content;
+        if (snippet.UseClipboard)
+        {
+            try
+            {
+                contentToType = System.Windows.Clipboard.GetText();
+                if (string.IsNullOrWhiteSpace(contentToType))
+                {
+                    throw new InvalidOperationException("Clipboard is empty or does not contain text");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to read clipboard: {ex.Message}", ex);
+            }
+        }
+        else if (string.IsNullOrWhiteSpace(contentToType))
         {
             throw new ArgumentException("Snippet content cannot be empty", nameof(snippet));
-        }
-
-        // Wait for the configured delay
-        if (snippet.Delay > 0)
-        {
-            await Task.Delay(TimeSpan.FromSeconds(snippet.Delay), cancellationToken);
         }
 
         // Type the content using the keyboard controller
         KeyboardController kc = new(cancellationToken);
         if (snippet.FastTyping)
         {
-            kc.TypeString(snippet.Content);
-
+            await kc.TypeStringAsync(contentToType);
         }
         else
         {
-            kc.TypeStringNaturally(snippet.Content, snippet.Content.Length * 60);
+            await kc.TypeStringNaturallyAsync(contentToType);
         }
 
         // Append new line if requested
@@ -60,7 +70,6 @@ public class TypingService
         {
             return string.Empty;
         }
-
         unsafe
         {
             char* buffer = stackalloc char[length + 1];

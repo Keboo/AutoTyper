@@ -2,95 +2,107 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:local="clr-namespace:AutoTyper.UI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:AutoTyper.UI.Models"
         xmlns:viewModels="clr-namespace:AutoTyper.UI.ViewModels"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:dd="urn:gong-wpf-dragdrop"
-        mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel, IsDesignTimeCreatable=False}"
-        Style="{StaticResource MaterialDesignWindow}"
-        Title="AutoTyper - Snippet Manager" 
-        Height="600" 
+        Title="AutoTyper - Snippet Manager"
         Width="900"
-        Topmost="{Binding IsTopMost}">
+        Height="600"
+        d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel,
+                                         IsDesignTimeCreatable=False}"
+        Style="{StaticResource MaterialDesignWindow}"
+        Topmost="{Binding IsTopMost}"
+        mc:Ignorable="d">
 
-  <materialDesign:DialogHost Identifier="RootDialog"
-                             CloseOnClickAway="True">
+  <materialDesign:DialogHost CloseOnClickAway="True" Identifier="RootDialog">
     <materialDesign:DialogHost.DialogContentTemplate>
       <DataTemplate DataType="{x:Type viewModels:AddSnippetViewModel}">
         <Grid Width="600" Margin="20">
           <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
           <!-- Dialog Title -->
-          <TextBlock Grid.Row="0" 
-                          Text="Add snippet"
-                          Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                          Margin="0,0,0,20"/>
+          <TextBlock Grid.Row="0"
+                     Margin="0,0,0,20"
+                     Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                     Text="Add snippet" />
+
+          <!-- Use Clipboard Toggle -->
+          <CheckBox Grid.Row="1"
+                    Margin="0,0,0,15"
+                    Content="Use clipboard content instead of specified text"
+                    IsChecked="{Binding UseClipboard}" />
 
           <!-- Name -->
-          <TextBox Grid.Row="1"
-                         materialDesign:HintAssist.Hint="Snippet Name"
-                         Text="{Binding Name}"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         Margin="0,0,0,15"/>
+          <TextBox Grid.Row="2"
+                   Margin="0,0,0,15"
+                   materialDesign:HintAssist.Hint="Snippet Name"
+                   IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
+                   Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                   Text="{Binding Name}" />
 
           <!-- Content -->
           <TextBox Grid.Row="3"
-                         materialDesign:HintAssist.Hint="Content to Type"
-                         Text="{Binding Content}"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                   MaxHeight="200"
+                   Margin="0,0,0,15"
                    VerticalContentAlignment="Top"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto"
-                         MaxHeight="200"
-                         Margin="0,0,0,15"/>
+                   materialDesign:HintAssist.Hint="Content to Type"
+                   AcceptsReturn="True"
+                   IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
+                   Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                   Text="{Binding Content}"
+                   TextWrapping="Wrap"
+                   VerticalScrollBarVisibility="Auto" />
 
           <!-- Delay -->
-          <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Delay (seconds):" VerticalAlignment="Center" Width="120"/>
-            <TextBox Text="{Binding Delay}" 
-                      Width="100"
-                      materialDesign:HintAssist.Hint="3.0"/>
+          <StackPanel Grid.Row="4"
+                      Margin="0,0,0,10"
+                      Orientation="Horizontal">
+            <TextBlock Width="120"
+                       VerticalAlignment="Center"
+                       Text="Delay (seconds):" />
+            <TextBox Width="100"
+                     materialDesign:HintAssist.Hint="3.0"
+                     Text="{Binding Delay}" />
           </StackPanel>
 
           <!-- Fast Typing -->
-          <CheckBox Grid.Row="5" 
-                          Content="Fast Typing (No delay between keystrokes)"
-                          IsChecked="{Binding FastTyping}"
-                          Margin="0,0,0,10"/>
+          <CheckBox Grid.Row="5"
+                    Margin="0,0,0,10"
+                    Content="Fast Typing (No delay between keystrokes)"
+                    IsChecked="{Binding FastTyping}" />
 
           <!-- Append New Line -->
-          <CheckBox Grid.Row="6" 
-                          Content="Append New Line (Press Enter after typing)"
-                          IsChecked="{Binding AppendNewLine}"
-                          Margin="0,0,0,20"/>
+          <CheckBox Grid.Row="6"
+                    Margin="0,0,0,20"
+                    Content="Append New Line (Press Enter after typing)"
+                    IsChecked="{Binding AppendNewLine}" />
 
           <!-- Buttons -->
-          <StackPanel Grid.Row="7" 
-                      Orientation="Horizontal" 
-                      HorizontalAlignment="Right">
-            <Button Content="CANCEL" 
+          <StackPanel Grid.Row="7"
+                      HorizontalAlignment="Right"
+                      Orientation="Horizontal">
+            <Button Width="100"
+                    Margin="0,0,10,0"
                     Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Width="100"
-                    Margin="0,0,10,0"/>
-            <Button Content="SAVE" 
+                    Content="CANCEL"
+                    Style="{StaticResource MaterialDesignOutlinedButton}" />
+            <Button Width="100"
                     Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
                     CommandParameter="{x:Static local:DialogResult.Confirmed}"
-                    Style="{StaticResource MaterialDesignRaisedButton}"
-                    Width="100"/>
+                    Content="SAVE"
+                    Style="{StaticResource MaterialDesignRaisedButton}" />
           </StackPanel>
         </Grid>
       </DataTemplate>
@@ -98,201 +110,219 @@
 
     <Grid>
       <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
       <!-- Menu -->
       <Menu Grid.Row="0">
         <MenuItem Header="_File">
-          <MenuItem Header="_Add Snippet" 
-                              Command="{Binding AddSnippetCommand}"
-                              InputGestureText="Ctrl+N">
+          <MenuItem Command="{Binding AddSnippetCommand}"
+                    Header="_Add Snippet"
+                    InputGestureText="Ctrl+N">
             <MenuItem.Icon>
-              <materialDesign:PackIcon Kind="Plus"/>
+              <materialDesign:PackIcon Kind="Plus" />
             </MenuItem.Icon>
           </MenuItem>
           <Separator />
-          <MenuItem Header="E_xit" Command="{x:Static ApplicationCommands.Close}"/>
+          <MenuItem Command="{x:Static ApplicationCommands.Close}" Header="E_xit" />
         </MenuItem>
         <MenuItem Header="_View">
-          <MenuItem Header="Always on _Top" 
-                              IsCheckable="True"
-                              IsChecked="{Binding IsTopMost}">
+          <MenuItem Header="Always on _Top"
+                    IsCheckable="True"
+                    IsChecked="{Binding IsTopMost}">
             <MenuItem.Icon>
-              <materialDesign:PackIcon Kind="Pin"/>
+              <materialDesign:PackIcon Kind="Pin" />
             </MenuItem.Icon>
           </MenuItem>
-          <Separator/>
-          <MenuItem Header="_Full View" 
-                              IsCheckable="True"
-                              IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Full}}"
-                              Command="{Binding SetViewModeCommand}"
-                              CommandParameter="{x:Static local:ViewMode.Full}">
+          <Separator />
+          <MenuItem Command="{Binding SetViewModeCommand}"
+                    CommandParameter="{x:Static local:ViewMode.Full}"
+                    Header="_Full View"
+                    IsCheckable="True"
+                    IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Full}}">
             <MenuItem.Icon>
-              <materialDesign:PackIcon Kind="ViewList"/>
+              <materialDesign:PackIcon Kind="ViewList" />
             </MenuItem.Icon>
           </MenuItem>
-          <MenuItem Header="_Compact View" 
-                              IsCheckable="True"
-                              IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Compact}}"
-                              Command="{Binding SetViewModeCommand}"
-                              CommandParameter="{x:Static local:ViewMode.Compact}">
+          <MenuItem Command="{Binding SetViewModeCommand}"
+                    CommandParameter="{x:Static local:ViewMode.Compact}"
+                    Header="_Compact View"
+                    IsCheckable="True"
+                    IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:ViewMode.Compact}}">
             <MenuItem.Icon>
-              <materialDesign:PackIcon Kind="ViewHeadline"/>
+              <materialDesign:PackIcon Kind="ViewHeadline" />
             </MenuItem.Icon>
           </MenuItem>
-          <Separator/>
-          <MenuItem Header="_Dark Mode" 
-                              IsCheckable="True"
-                              IsChecked="{Binding IsDarkMode}"
-                              Command="{Binding ToggleThemeCommand}">
+          <Separator />
+          <MenuItem Command="{Binding ToggleThemeCommand}"
+                    Header="_Dark Mode"
+                    IsCheckable="True"
+                    IsChecked="{Binding IsDarkMode}">
             <MenuItem.Icon>
-              <materialDesign:PackIcon Kind="Brightness6"/>
+              <materialDesign:PackIcon Kind="Brightness6" />
             </MenuItem.Icon>
           </MenuItem>
         </MenuItem>
       </Menu>
 
       <!-- Toolbar -->
-      <materialDesign:ColorZone Grid.Row="1" 
-                                      Mode="PrimaryMid" 
-                                      Padding="16,8"
-                                      materialDesign:ElevationAssist.Elevation="Dp2">
+      <materialDesign:ColorZone Grid.Row="1"
+                                Padding="16,8"
+                                materialDesign:ElevationAssist.Elevation="Dp2"
+                                Mode="PrimaryMid">
         <DockPanel>
-          <Button Content="ADD SNIPPET" 
-                            Command="{Binding AddSnippetCommand}"
-                            Style="{StaticResource MaterialDesignPaperSecondaryButton}"
-                            DockPanel.Dock="Right"
-                            Margin="8,0,0,0">
+          <Button Margin="8,0,0,0"
+                  Command="{Binding AddSnippetCommand}"
+                  Content="ADD SNIPPET"
+                  DockPanel.Dock="Right"
+                  Style="{StaticResource MaterialDesignPaperSecondaryButton}">
             <Button.CommandParameter>
-              <materialDesign:PackIcon Kind="Plus"/>
+              <materialDesign:PackIcon Kind="Plus" />
             </Button.CommandParameter>
           </Button>
 
-          <ToggleButton DockPanel.Dock="Right"
-                        IsChecked="{Binding IsDarkMode}"
+          <ToggleButton Margin="8,0,0,0"
                         Command="{Binding ToggleThemeCommand}"
+                        DockPanel.Dock="Right"
+                        IsChecked="{Binding IsDarkMode}"
                         Style="{StaticResource MaterialDesignActionToggleButton}"
-                        ToolTip="Toggle Dark/Light Mode"
-                        Margin="8,0,0,0">
+                        ToolTip="Toggle Dark/Light Mode">
             <ToggleButton.Content>
-              <materialDesign:PackIcon Kind="Brightness6"/>
+              <materialDesign:PackIcon Kind="Brightness6" />
             </ToggleButton.Content>
             <materialDesign:ToggleButtonAssist.OnContent>
-              <materialDesign:PackIcon Kind="WeatherNight"/>
+              <materialDesign:PackIcon Kind="WeatherNight" />
             </materialDesign:ToggleButtonAssist.OnContent>
           </ToggleButton>
 
           <StackPanel Orientation="Horizontal">
-            <materialDesign:PackIcon Kind="CodeBraces" 
-                                                VerticalAlignment="Center"
-                                                Margin="0,0,8,0"/>
-            <TextBlock Text="Code Snippets" 
-                        FontSize="18"
-                        FontWeight="Medium"
-                        VerticalAlignment="Center"/>
+            <materialDesign:PackIcon Margin="0,0,8,0"
+                                     VerticalAlignment="Center"
+                                     Kind="CodeBraces" />
+            <TextBlock VerticalAlignment="Center"
+                       FontSize="18"
+                       FontWeight="Medium"
+                       Text="Code Snippets" />
           </StackPanel>
         </DockPanel>
       </materialDesign:ColorZone>
 
       <!-- Snippet List -->
-      <ScrollViewer Grid.Row="2" 
-                         VerticalScrollBarVisibility="Auto"
-                         Margin="16">
-        <ItemsControl ItemsSource="{Binding Snippets}"
+      <ScrollViewer Grid.Row="2"
+                    Margin="16"
+                    VerticalScrollBarVisibility="Auto">
+        <ItemsControl dd:DragDrop.DropHandler="{Binding}"
                       dd:DragDrop.IsDragSource="True"
                       dd:DragDrop.IsDropTarget="True"
-                      dd:DragDrop.DropHandler="{Binding}">
+                      ItemsSource="{Binding Snippets}">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="{x:Type models:Snippet}">
-              <materialDesign:Card Margin="0,0,0,12"
-                                               Padding="0">
+              <materialDesign:Card Margin="0,0,0,12" Padding="0">
+                <materialDesign:Card.Style>
+                  <Style TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding UseClipboard}" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource SecondaryHueLightBrush}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </materialDesign:Card.Style>
                 <Grid>
                   <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
 
                   <!-- Clickable content area -->
                   <Button Grid.Column="0"
                           Height="Auto"
+                          Padding="16"
+                          HorizontalContentAlignment="Stretch"
                           Command="{Binding DataContext.ExecuteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                           CommandParameter="{Binding}"
-                          Style="{StaticResource MaterialDesignFlatButton}"
-                          HorizontalContentAlignment="Stretch"
-                          Padding="16">
+                          Style="{StaticResource MaterialDesignFlatButton}">
                     <Grid>
                       <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                       </Grid.RowDefinitions>
 
                       <!-- Full View Layout -->
                       <Grid Grid.Row="0" Grid.RowSpan="3">
                         <Grid.Style>
                           <Style TargetType="Grid">
-                            <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="Visibility" Value="Visible" />
                             <Style.Triggers>
-                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                           Value="{x:Static local:ViewMode.Compact}">
-                                <Setter Property="Visibility" Value="Collapsed"/>
+                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="{x:Static local:ViewMode.Compact}">
+                                <Setter Property="Visibility" Value="Collapsed" />
                               </DataTrigger>
                             </Style.Triggers>
                           </Style>
                         </Grid.Style>
-                        
+
                         <Grid.RowDefinitions>
-                          <RowDefinition Height="Auto"/>
-                          <RowDefinition Height="Auto"/>
-                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="Auto" />
+                          <RowDefinition Height="Auto" />
+                          <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <!-- Name -->
                         <TextBlock Grid.Row="0"
-                                  Text="{Binding Name}"
-                                  FontSize="16"
-                                  FontWeight="SemiBold"
-                                  Margin="0,0,0,4"/>
+                                   Margin="0,0,0,4"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Text="{Binding Name}" />
 
                         <!-- Content Preview -->
                         <TextBlock Grid.Row="1"
-                                    Text="{Binding Content}"
-                                    TextWrapping="NoWrap"
-                                    TextTrimming="CharacterEllipsis"
-                                    Opacity="0.7"
-                                    Margin="0,0,0,8"/>
+                                   Margin="0,0,0,8"
+                                   Opacity="0.7"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap">
+                          <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                              <Setter Property="Text" Value="{Binding Content}" />
+                              <Style.Triggers>
+                                <DataTrigger Binding="{Binding UseClipboard}" Value="True">
+                                  <Setter Property="FontStyle" Value="Italic" />
+                                  <Setter Property="Text" Value="Types current clipboard content" />
+                                </DataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </TextBlock.Style>
+                        </TextBlock>
 
                         <!-- Properties -->
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
-                          <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s delay'}"
-                                              Margin="0,0,8,0"
-                                              IconBackground="{DynamicResource PrimaryHueMidBrush}"
-                                              IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                          <materialDesign:Chip Margin="0,0,8,0"
+                                               Content="{Binding Delay, StringFormat='{}{0}s delay'}"
+                                               IconBackground="{DynamicResource PrimaryHueMidBrush}"
+                                               IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="ClockOutline"/>
+                              <materialDesign:PackIcon Kind="ClockOutline" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
 
-                          <materialDesign:Chip Content="Fast Typing"
-                                                Margin="0,0,8,0"
-                                                Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                IconBackground="{DynamicResource SecondaryHueMidBrush}"
-                                                IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
+                          <materialDesign:Chip Margin="0,0,8,0"
+                                               Content="Fast Typing"
+                                               IconBackground="{DynamicResource SecondaryHueMidBrush}"
+                                               IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                                               Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="FlashOutline"/>
+                              <materialDesign:PackIcon Kind="FlashOutline" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
 
                           <materialDesign:Chip Content="+ Enter"
-                                              Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              IconBackground="{DynamicResource PrimaryHueLightBrush}"
-                                              IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                                               IconBackground="{DynamicResource PrimaryHueLightBrush}"
+                                               IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}"
+                                               Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="KeyboardReturn"/>
+                              <materialDesign:PackIcon Kind="KeyboardReturn" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
                         </StackPanel>
@@ -302,104 +332,113 @@
                       <DockPanel Grid.Row="0" Grid.RowSpan="3">
                         <DockPanel.Style>
                           <Style TargetType="DockPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                           Value="{x:Static local:ViewMode.Compact}">
-                                <Setter Property="Visibility" Value="Visible"/>
+                              <DataTrigger Binding="{Binding DataContext.CurrentViewMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="{x:Static local:ViewMode.Compact}">
+                                <Setter Property="Visibility" Value="Visible" />
                               </DataTrigger>
                             </Style.Triggers>
                           </Style>
                         </DockPanel.Style>
 
                         <!-- Chips on the right -->
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="16,0,0,0">
-                          <materialDesign:Chip Content="{Binding Delay, StringFormat='{}{0}s'}"
-                                              Margin="0,0,4,0"
-                                              IconBackground="{DynamicResource PrimaryHueMidBrush}"
-                                              IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                        <StackPanel Margin="16,0,0,0"
+                                    DockPanel.Dock="Right"
+                                    Orientation="Horizontal">
+                          <materialDesign:Chip Margin="0,0,4,0"
+                                               Content="{Binding Delay, StringFormat='{}{0}s'}"
+                                               IconBackground="{DynamicResource PrimaryHueMidBrush}"
+                                               IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="ClockOutline"/>
+                              <materialDesign:PackIcon Kind="ClockOutline" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
 
-                          <materialDesign:Chip Content="Fast"
-                                                Margin="0,0,4,0"
-                                                Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                IconBackground="{DynamicResource SecondaryHueMidBrush}"
-                                                IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}">
+                          <materialDesign:Chip Margin="0,0,4,0"
+                                               Content="Fast"
+                                               IconBackground="{DynamicResource SecondaryHueMidBrush}"
+                                               IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                                               Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="FlashOutline"/>
+                              <materialDesign:PackIcon Kind="FlashOutline" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
 
                           <materialDesign:Chip Content="↵"
-                                              Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              IconBackground="{DynamicResource PrimaryHueLightBrush}"
-                                              IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                                               IconBackground="{DynamicResource PrimaryHueLightBrush}"
+                                               IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}"
+                                               Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="KeyboardReturn"/>
+                              <materialDesign:PackIcon Kind="KeyboardReturn" />
                             </materialDesign:Chip.Icon>
                           </materialDesign:Chip>
                         </StackPanel>
 
                         <!-- Name on the left -->
-                        <TextBlock Text="{Binding Name}"
-                                  FontSize="16"
-                                  FontWeight="SemiBold"
-                                  VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Text="{Binding Name}" />
                       </DockPanel>
                     </Grid>
                   </Button>
 
                   <!-- Action Buttons -->
                   <materialDesign:PopupBox Grid.Column="1"
-                                          VerticalAlignment="Center"
-                                          Margin="8"
-                                          PlacementMode="BottomAndAlignRightEdges"
-                                          StaysOpen="False">
+                                           Margin="8"
+                                           VerticalAlignment="Center"
+                                           PlacementMode="BottomAndAlignRightEdges"
+                                           StaysOpen="False">
                     <StackPanel>
                       <Button Command="{Binding DataContext.CopySnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                               CommandParameter="{Binding}"
-                              ToolTip="Copy Snippet to Clipboard"
-                              Content="Copy">
+                              Content="Copy"
+                              ToolTip="Copy Snippet to Clipboard">
+                        <Button.Style>
+                          <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignPopupBoxButton}">
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding UseClipboard}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Button.Style>
                         <Button.ContentTemplate>
                           <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                              <materialDesign:PackIcon Kind="ContentCopy" 
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,8,0"/>
-                              <TextBlock Text="Copy" VerticalAlignment="Center"/>
+                              <materialDesign:PackIcon Margin="0,0,8,0"
+                                                       VerticalAlignment="Center"
+                                                       Kind="ContentCopy" />
+                              <TextBlock VerticalAlignment="Center" Text="Copy" />
                             </StackPanel>
                           </DataTemplate>
                         </Button.ContentTemplate>
                       </Button>
                       <Button Command="{Binding DataContext.EditSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                               CommandParameter="{Binding}"
-                              ToolTip="Edit Snippet"
-                              Content="Edit">
+                              ToolTip="Edit Snippet">
                         <Button.ContentTemplate>
                           <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                              <materialDesign:PackIcon Kind="Pencil" 
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,8,0"/>
-                              <TextBlock Text="Edit" VerticalAlignment="Center"/>
+                              <materialDesign:PackIcon Margin="0,0,8,0"
+                                                       VerticalAlignment="Center"
+                                                       Kind="Edit" />
+                              <TextBlock VerticalAlignment="Center" Text="Edit" />
                             </StackPanel>
                           </DataTemplate>
                         </Button.ContentTemplate>
                       </Button>
                       <Button Command="{Binding DataContext.DeleteSnippetCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                               CommandParameter="{Binding}"
-                              ToolTip="Delete Snippet"
-                              Content="Delete">
+                              Content="Delete"
+                              ToolTip="Delete Snippet">
                         <Button.ContentTemplate>
                           <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                              <materialDesign:PackIcon Kind="Delete" 
-                                                      VerticalAlignment="Center"
-                                                      Margin="0,0,8,0"/>
-                              <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                              <materialDesign:PackIcon Margin="0,0,8,0"
+                                                       VerticalAlignment="Center"
+                                                       Kind="Delete" />
+                              <TextBlock VerticalAlignment="Center" Text="Delete" />
                             </StackPanel>
                           </DataTemplate>
                         </Button.ContentTemplate>
@@ -414,21 +453,22 @@
       </ScrollViewer>
 
       <!-- Status Bar -->
-      <materialDesign:ColorZone Grid.Row="3" 
-                                Mode="PrimaryLight" 
-                                Padding="16,8">
+      <materialDesign:ColorZone Grid.Row="3"
+                                Padding="16,8"
+                                Mode="PrimaryLight">
         <DockPanel>
-          <materialDesign:PackIcon Kind="Information" 
-                                            VerticalAlignment="Center"
-                                            Margin="0,0,8,0"/>
-          <TextBlock Text="{Binding StatusMessage}" 
-                              VerticalAlignment="Center"/>
+          <materialDesign:PackIcon Margin="0,0,8,0"
+                                   VerticalAlignment="Center"
+                                   Kind="Information" />
+          <TextBlock VerticalAlignment="Center" Text="{Binding StatusMessage}" />
         </DockPanel>
       </materialDesign:ColorZone>
     </Grid>
   </materialDesign:DialogHost>
 
   <Window.InputBindings>
-    <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding AddSnippetCommand}"/>
+    <KeyBinding Key="N"
+                Command="{Binding AddSnippetCommand}"
+                Modifiers="Ctrl" />
   </Window.InputBindings>
 </Window>

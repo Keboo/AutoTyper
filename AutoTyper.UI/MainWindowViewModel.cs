@@ -90,6 +90,7 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
             {
                 Snippets.Add(snippet);
             }
+
             StatusMessage = $"Loaded {snippets.Count} snippet(s)";
         }
         catch (Exception ex)
@@ -119,9 +120,12 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
         if (await DialogHost.Show(dialogViewModel, "RootDialog") is DialogResult.Confirmed)
         {
             Snippet newSnippet = dialogViewModel.GetSnippet();
-            newSnippet.Order = Snippets.Count;
-
-            Snippets.Add(newSnippet);
+            newSnippet.Order = 0;
+            Snippets.Insert(0, newSnippet);
+            for(int i = 1; i < Snippets.Count; i++)
+            {
+                Snippets[i].Order = i;
+            }
             await SaveSnippetsAsync();
         }
     }
@@ -196,7 +200,8 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
             Content = snippet.Content,
             FastTyping = snippet.FastTyping,
             Delay = snippet.Delay,
-            AppendNewLine = snippet.AppendNewLine
+            AppendNewLine = snippet.AppendNewLine,
+            UseClipboard = snippet.UseClipboard
         };
 
         // Show dialog

@@ -78,11 +78,11 @@ public sealed partial class Program
             KeyboardController kc = new(token);
             if (parseResult.GetValue(fastTyping))
             {
-                kc.TypeStringNaturally(text, text.Length * 60);
+                await kc.TypeStringNaturallyAsync(text);
             }
             else
             {
-                kc.TypeString(text);
+                await kc.TypeStringAsync(text);
             }
 
             if (parseResult.GetValue(addNewLine))

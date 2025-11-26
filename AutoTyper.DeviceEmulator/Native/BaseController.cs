@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace AutoTyper.DeviceEmulator.Native;
 
 /// <summary>
@@ -61,35 +56,8 @@ public abstract class BaseController
     /// Provides Sleep cycle that can be cancelled with CancellationToken.
     /// </summary>
     /// <visibility>public</visibility>
-    public void Sleep(TimeSpan aTimeout)
+    protected async Task DelayAsync(TimeSpan timeout)
     {
-        int num = (int)aTimeout.TotalMilliseconds;
-        while (num > 0)
-        {
-            if (num > 100)
-            {
-                Task.Delay(100).Wait();
-                num -= 100;
-            }
-            else
-            {
-                Task.Delay(num).Wait();
-                num = 0;
-            }
-            if (CancellationToken.IsCancellationRequested)
-            {
-                CancellationToken.ThrowIfCancellationRequested();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Provides Sleep cycle that can be cancelled with CancellationToken.
-    /// </summary>
-    /// <param name="aMillisecondTimeout"></param>
-    /// <visibility>public</visibility>
-    public void Sleep(int aMillisecondTimeout)
-    {
-        Sleep(new TimeSpan(0, 0, 0, 0, aMillisecondTimeout));
+        await Task.Delay(timeout, CancellationToken);
     }
 }

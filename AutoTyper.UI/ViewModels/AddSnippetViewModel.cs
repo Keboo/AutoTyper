@@ -21,15 +21,19 @@ public partial class AddSnippetViewModel : ObservableObject
     [ObservableProperty]
     private bool _appendNewLine;
 
+    [ObservableProperty]
+    private bool _useClipboard;
+
     public Snippet GetSnippet()
     {
         return new()
         {
-            Name = Name.Trim(),
+            Name = UseClipboard ? "<Clipboard>" : Name.Trim(),
             Content = Content,
             FastTyping = FastTyping,
             Delay = Delay,
-            AppendNewLine = AppendNewLine
+            AppendNewLine = AppendNewLine,
+            UseClipboard = UseClipboard
         };
     }
 }
