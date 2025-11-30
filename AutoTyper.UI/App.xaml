@@ -19,6 +19,7 @@
       <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
       <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
       <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+      <converters:MonitorSelectionToStringConverter x:Key="MonitorSelectionToStringConverter" />
     </ResourceDictionary>
   </Application.Resources>
 </Application>

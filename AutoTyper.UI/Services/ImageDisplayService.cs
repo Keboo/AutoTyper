@@ -45,9 +45,8 @@ public class ImageDisplayService
         image.EndInit();
         image.Freeze();
 
-        // Get the monitor where the cursor is located
-        WpfPoint cursorPosition = GetCursorPosition();
-        Screen targetScreen = Screen.FromPoint(new DrawingPoint((int)cursorPosition.X, (int)cursorPosition.Y));
+        // Get the target screen based on monitor selection
+        Screen targetScreen = GetTargetScreen(snippet.MonitorSelection, snippet.MonitorIndex);
 
         // Get DPI scaling factor for the target screen
         double dpiScaleX = 1.0;
@@ -103,6 +102,34 @@ public class ImageDisplayService
                 window.Close();
             }, DispatcherPriority.Normal, cancellationToken);
         }
+    }
+
+    private static Screen GetTargetScreen(MonitorSelection monitorSelection, int monitorIndex)
+    {
+        return monitorSelection switch
+        {
+            MonitorSelection.PrimaryMonitor => Screen.PrimaryScreen ?? Screen.AllScreens[0],
+            MonitorSelection.MonitorByIndex => GetScreenByIndex(monitorIndex),
+            MonitorSelection.CursorMonitor => GetScreenFromCursor(),
+            _ => GetScreenFromCursor()
+        };
+    }
+
+    private static Screen GetScreenByIndex(int index)
+    {
+        Screen[] screens = Screen.AllScreens;
+        if (index >= 0 && index < screens.Length)
+        {
+            return screens[index];
+        }
+        // Fallback to primary screen if index is out of range
+        return Screen.PrimaryScreen ?? screens[0];
+    }
+
+    private static Screen GetScreenFromCursor()
+    {
+        WpfPoint cursorPosition = GetCursorPosition();
+        return Screen.FromPoint(new DrawingPoint((int)cursorPosition.X, (int)cursorPosition.Y));
     }
 
     private static void ApplyTargetResolution(BitmapImage image, int targetWidth, int targetHeight, bool maintainAspectRatio)

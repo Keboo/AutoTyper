@@ -16,6 +16,13 @@ public enum ImageCorner
     BottomRight
 }
 
+public enum MonitorSelection
+{
+    CursorMonitor,
+    PrimaryMonitor,
+    MonitorByIndex
+}
+
 public partial class Snippet : ObservableObject
 {
     [ObservableProperty]
@@ -66,4 +73,10 @@ public partial class Snippet : ObservableObject
 
     [ObservableProperty]
     private bool _maintainAspectRatio = true;
+
+    [ObservableProperty]
+    private MonitorSelection _monitorSelection = MonitorSelection.CursorMonitor;
+
+    [ObservableProperty]
+    private int _monitorIndex;
 }

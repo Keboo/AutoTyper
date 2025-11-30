@@ -197,9 +197,37 @@
                 </StackPanel>
 
                 <!-- Maintain Aspect Ratio -->
-                <CheckBox Margin="0,0,0,20"
+                <CheckBox Margin="0,0,0,15"
                           Content="Maintain aspect ratio when resizing"
                           IsChecked="{Binding MaintainAspectRatio}" />
+
+                <!-- Monitor Selection -->
+                <StackPanel Margin="0,0,0,15">
+                  <TextBlock Margin="0,0,0,8" Text="Target Monitor:" />
+                  <ComboBox materialDesign:HintAssist.Hint="Monitor"
+                            SelectedItem="{Binding MonitorSelection}"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource MonitorSelectionToStringConverter}}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <models:MonitorSelection>CursorMonitor</models:MonitorSelection>
+                    <models:MonitorSelection>PrimaryMonitor</models:MonitorSelection>
+                    <models:MonitorSelection>MonitorByIndex</models:MonitorSelection>
+                  </ComboBox>
+                </StackPanel>
+
+                <!-- Monitor Index -->
+                <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
+                  <TextBlock Width="150"
+                             VerticalAlignment="Center"
+                             Text="Monitor Index:" />
+                  <TextBox Width="100"
+                           materialDesign:HintAssist.Hint="0"
+                           IsEnabled="{Binding IsMonitorIndexEnabled}"
+                           Text="{Binding MonitorIndex}" />
+                </StackPanel>
               </StackPanel>
             </StackPanel>
           </ScrollViewer>
@@ -320,7 +348,7 @@
             <TextBlock VerticalAlignment="Center"
                        FontSize="18"
                        FontWeight="Medium"
-                       Text="Code Snippets" />
+                       Text="Snippets" />
           </StackPanel>
         </DockPanel>
       </materialDesign:ColorZone>

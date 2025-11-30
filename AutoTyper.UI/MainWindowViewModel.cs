@@ -225,7 +225,9 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
             OffsetY = snippet.OffsetY,
             TargetWidth = snippet.TargetWidth,
             TargetHeight = snippet.TargetHeight,
-            MaintainAspectRatio = snippet.MaintainAspectRatio
+            MaintainAspectRatio = snippet.MaintainAspectRatio,
+            MonitorSelection = snippet.MonitorSelection,
+            MonitorIndex = snippet.MonitorIndex
         };
 
         // Show dialog

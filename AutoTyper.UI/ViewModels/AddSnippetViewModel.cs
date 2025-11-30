@@ -57,8 +57,16 @@ public partial class AddSnippetViewModel : ObservableObject
     [ObservableProperty]
     private bool _maintainAspectRatio = true;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsMonitorIndexEnabled))]
+    private MonitorSelection _monitorSelection = MonitorSelection.CursorMonitor;
+
+    [ObservableProperty]
+    private int _monitorIndex;
+
     public bool IsTextSnippet => SnippetType == SnippetType.Text;
     public bool IsImageSnippet => SnippetType == SnippetType.Image;
+    public bool IsMonitorIndexEnabled => MonitorSelection == MonitorSelection.MonitorByIndex;
 
     [RelayCommand]
     private void BrowseImage()
@@ -95,7 +103,9 @@ public partial class AddSnippetViewModel : ObservableObject
             OffsetY = OffsetY,
             TargetWidth = TargetWidth,
             TargetHeight = TargetHeight,
-            MaintainAspectRatio = MaintainAspectRatio
+            MaintainAspectRatio = MaintainAspectRatio,
+            MonitorSelection = MonitorSelection,
+            MonitorIndex = MonitorIndex
         };
     }
 }
