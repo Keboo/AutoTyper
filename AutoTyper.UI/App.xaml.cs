@@ -13,12 +13,14 @@ using Microsoft.Extensions.Hosting;
 
 using Velopack;
 
+using WpfApplication = System.Windows.Application;
+
 namespace AutoTyper.UI;
 
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public partial class App : WpfApplication
 {
     [STAThread]
     private static void Main(string[] args)
@@ -54,6 +56,7 @@ public partial class App : Application
 
             // Services
             services.AddSingleton<SnippetStorageService>();
+            services.AddSingleton<ImageDisplayService>();
             services.AddSingleton<TypingService>();
             services.AddSingleton<ThemeService>();
 

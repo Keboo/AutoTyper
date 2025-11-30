@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Windows.Data;
 
+using WpfBinding = System.Windows.Data.Binding;
+
 namespace AutoTyper.UI.Converters;
 
 public class EnumToBooleanConverter : IValueConverter
@@ -18,6 +20,6 @@ public class EnumToBooleanConverter : IValueConverter
         if (value is bool boolValue && boolValue && parameter != null)
             return parameter;
 
-        return Binding.DoNothing;
+        return WpfBinding.DoNothing;
     }
 }

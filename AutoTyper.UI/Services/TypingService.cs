@@ -10,6 +10,28 @@ namespace AutoTyper.UI.Services;
 
 public class TypingService
 {
+    private readonly ImageDisplayService _imageDisplayService;
+
+    public TypingService(ImageDisplayService imageDisplayService)
+    {
+        ArgumentNullException.ThrowIfNull(imageDisplayService);
+        _imageDisplayService = imageDisplayService;
+    }
+
+    public async Task ExecuteSnippetAsync(Snippet snippet, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(snippet);
+
+        if (snippet.SnippetType == SnippetType.Image)
+        {
+            await _imageDisplayService.DisplayImageAsync(snippet, cancellationToken);
+        }
+        else
+        {
+            await TypeSnippetAsync(snippet, cancellationToken);
+        }
+    }
+
     public async Task TypeSnippetAsync(Snippet snippet, CancellationToken cancellationToken = default)
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

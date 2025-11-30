@@ -24,11 +24,7 @@
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
@@ -38,59 +34,178 @@
                      Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                      Text="Add snippet" />
 
-          <!-- Use Clipboard Toggle -->
-          <CheckBox Grid.Row="1"
-                    Margin="0,0,0,15"
-                    Content="Use clipboard content instead of specified text"
-                    IsChecked="{Binding UseClipboard}" />
-
-          <!-- Name -->
-          <TextBox Grid.Row="2"
-                   Margin="0,0,0,15"
-                   materialDesign:HintAssist.Hint="Snippet Name"
-                   IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
-                   Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                   Text="{Binding Name}" />
-
-          <!-- Content -->
-          <TextBox Grid.Row="3"
-                   MaxHeight="200"
-                   Margin="0,0,0,15"
-                   VerticalContentAlignment="Top"
-                   materialDesign:HintAssist.Hint="Content to Type"
-                   AcceptsReturn="True"
-                   IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
-                   Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                   Text="{Binding Content}"
-                   TextWrapping="Wrap"
-                   VerticalScrollBarVisibility="Auto" />
-
-          <!-- Delay -->
-          <StackPanel Grid.Row="4"
-                      Margin="0,0,0,10"
-                      Orientation="Horizontal">
-            <TextBlock Width="120"
-                       VerticalAlignment="Center"
-                       Text="Delay (seconds):" />
-            <TextBox Width="100"
-                     materialDesign:HintAssist.Hint="3.0"
-                     Text="{Binding Delay}" />
+          <!-- Snippet Type Selection -->
+          <StackPanel Grid.Row="1" Margin="0,0,0,20" Orientation="Horizontal">
+            <RadioButton Content="Text Snippet"
+                         GroupName="SnippetType"
+                         IsChecked="{Binding SnippetType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:SnippetType.Text}}"
+                         Margin="0,0,20,0"
+                         Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
+            <RadioButton Content="Image Snippet"
+                         GroupName="SnippetType"
+                         IsChecked="{Binding SnippetType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static models:SnippetType.Image}}"
+                         Style="{StaticResource MaterialDesignChoiceChipPrimaryRadioButton}" />
           </StackPanel>
 
-          <!-- Fast Typing -->
-          <CheckBox Grid.Row="5"
-                    Margin="0,0,0,10"
-                    Content="Fast Typing (No delay between keystrokes)"
-                    IsChecked="{Binding FastTyping}" />
+          <!-- Content Area -->
+          <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+              <!-- Text Snippet Fields -->
+              <StackPanel Visibility="{Binding IsTextSnippet, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!-- Use Clipboard Toggle -->
+                <CheckBox Margin="0,0,0,15"
+                          Content="Use clipboard content instead of specified text"
+                          IsChecked="{Binding UseClipboard}" />
 
-          <!-- Append New Line -->
-          <CheckBox Grid.Row="6"
-                    Margin="0,0,0,20"
-                    Content="Append New Line (Press Enter after typing)"
-                    IsChecked="{Binding AppendNewLine}" />
+                <!-- Name -->
+                <TextBox Margin="0,0,0,15"
+                         materialDesign:HintAssist.Hint="Snippet Name"
+                         IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Name}" />
+
+                <!-- Content -->
+                <TextBox MaxHeight="200"
+                         Margin="0,0,0,15"
+                         VerticalContentAlignment="Top"
+                         materialDesign:HintAssist.Hint="Content to Type"
+                         AcceptsReturn="True"
+                         IsEnabled="{Binding UseClipboard, Converter={StaticResource InverseBooleanConverter}}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Content}"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" />
+
+                <!-- Delay -->
+                <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                  <TextBlock Width="120"
+                             VerticalAlignment="Center"
+                             Text="Delay (seconds):" />
+                  <TextBox Width="100"
+                           materialDesign:HintAssist.Hint="3.0"
+                           Text="{Binding Delay}" />
+                </StackPanel>
+
+                <!-- Fast Typing -->
+                <CheckBox Margin="0,0,0,10"
+                          Content="Fast Typing (No delay between keystrokes)"
+                          IsChecked="{Binding FastTyping}" />
+
+                <!-- Append New Line -->
+                <CheckBox Margin="0,0,0,20"
+                          Content="Append New Line (Press Enter after typing)"
+                          IsChecked="{Binding AppendNewLine}" />
+              </StackPanel>
+
+              <!-- Image Snippet Fields -->
+              <StackPanel Visibility="{Binding IsImageSnippet, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!-- Name -->
+                <TextBox Margin="0,4,0,15"
+                         materialDesign:HintAssist.Hint="Snippet Name (optional - uses filename if empty)"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding Name}" />
+
+                <!-- Image Path -->
+                <Grid Margin="0,0,0,15">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Grid.Column="0"
+                           Margin="0,0,10,0"
+                           materialDesign:HintAssist.Hint="Image Path"
+                           IsReadOnly="True"
+                           Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                           Text="{Binding ImagePath}" />
+                  <Button Grid.Column="1"
+                          Command="{Binding BrowseImageCommand}"
+                          Content="BROWSE"
+                          Style="{StaticResource MaterialDesignRaisedButton}" />
+                </Grid>
+
+                <!-- Delay -->
+                <StackPanel Margin="0,0,0,15" Orientation="Horizontal">
+                  <TextBlock Width="150"
+                             VerticalAlignment="Center"
+                             Text="Delay (seconds):" />
+                  <TextBox Width="100"
+                           materialDesign:HintAssist.Hint="3.0"
+                           Text="{Binding Delay}" />
+                </StackPanel>
+
+                <!-- Display Duration -->
+                <StackPanel Margin="0,0,0,15" Orientation="Horizontal">
+                  <TextBlock Width="150"
+                             VerticalAlignment="Center"
+                             Text="Display Duration (sec):" />
+                  <TextBox Width="100"
+                           materialDesign:HintAssist.Hint="5.0"
+                           Text="{Binding DisplayDuration}" />
+                </StackPanel>
+
+                <!-- Corner Selection -->
+                <StackPanel Margin="0,0,0,15">
+                  <TextBlock Margin="0,0,0,8" Text="Display Corner:" />
+                  <ComboBox materialDesign:HintAssist.Hint="Corner"
+                            SelectedItem="{Binding Corner}"
+                            Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <models:ImageCorner>TopLeft</models:ImageCorner>
+                    <models:ImageCorner>TopRight</models:ImageCorner>
+                    <models:ImageCorner>BottomLeft</models:ImageCorner>
+                    <models:ImageCorner>BottomRight</models:ImageCorner>
+                  </ComboBox>
+                </StackPanel>
+
+                <!-- Offset -->
+                <StackPanel Margin="0,0,0,15">
+                  <TextBlock Margin="0,0,0,8" Text="Offset (pixels):" />
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="30"
+                               VerticalAlignment="Center"
+                               Text="X:" />
+                    <TextBox Width="80"
+                             Margin="0,0,20,0"
+                             materialDesign:HintAssist.Hint="0"
+                             Text="{Binding OffsetX}" />
+                    <TextBlock Width="30"
+                               VerticalAlignment="Center"
+                               Text="Y:" />
+                    <TextBox Width="80"
+                             materialDesign:HintAssist.Hint="0"
+                             Text="{Binding OffsetY}" />
+                  </StackPanel>
+                </StackPanel>
+
+                <!-- Target Resolution -->
+                <StackPanel Margin="0,0,0,15">
+                  <TextBlock Margin="0,0,0,8" Text="Target Resolution (optional):" />
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Width="60"
+                               VerticalAlignment="Center"
+                               Text="Width:" />
+                    <TextBox Width="80"
+                             Margin="0,0,20,0"
+                             materialDesign:HintAssist.Hint="Auto"
+                             Text="{Binding TargetWidth}" />
+                    <TextBlock Width="60"
+                               VerticalAlignment="Center"
+                               Text="Height:" />
+                    <TextBox Width="80"
+                             materialDesign:HintAssist.Hint="Auto"
+                             Text="{Binding TargetHeight}" />
+                  </StackPanel>
+                </StackPanel>
+
+                <!-- Maintain Aspect Ratio -->
+                <CheckBox Margin="0,0,0,20"
+                          Content="Maintain aspect ratio when resizing"
+                          IsChecked="{Binding MaintainAspectRatio}" />
+              </StackPanel>
+            </StackPanel>
+          </ScrollViewer>
 
           <!-- Buttons -->
-          <StackPanel Grid.Row="7"
+          <StackPanel Grid.Row="3"
                       HorizontalAlignment="Right"
                       Orientation="Horizontal">
             <Button Width="100"
@@ -221,15 +336,6 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="{x:Type models:Snippet}">
               <materialDesign:Card Margin="0,0,0,12" Padding="0">
-                <materialDesign:Card.Style>
-                  <Style TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding UseClipboard}" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource SecondaryHueLightBrush}" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </materialDesign:Card.Style>
                 <Grid>
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -291,6 +397,10 @@
                                   <Setter Property="FontStyle" Value="Italic" />
                                   <Setter Property="Text" Value="Types current clipboard content" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding SnippetType}" Value="{x:Static models:SnippetType.Image}">
+                                  <Setter Property="FontStyle" Value="Italic" />
+                                  <Setter Property="Text" Value="{Binding ImagePath}" />
+                                </DataTrigger>
                               </Style.Triggers>
                             </Style>
                           </TextBlock.Style>
@@ -298,33 +408,87 @@
 
                         <!-- Properties -->
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
-                          <materialDesign:Chip Margin="0,0,8,0"
-                                               Content="{Binding Delay, StringFormat='{}{0}s delay'}"
-                                               IconBackground="{DynamicResource PrimaryHueMidBrush}"
-                                               IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="ClockOutline" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                          <!-- Text snippet properties -->
+                          <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                              <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding SnippetType}" Value="{x:Static models:SnippetType.Image}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </StackPanel.Style>
+                            
+                            <materialDesign:Chip Margin="0,0,8,0"
+                                                 Content="{Binding Delay, StringFormat='{}{0}s delay'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
 
-                          <materialDesign:Chip Margin="0,0,8,0"
-                                               Content="Fast Typing"
-                                               IconBackground="{DynamicResource SecondaryHueMidBrush}"
-                                               IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}"
-                                               Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="FlashOutline" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                            <materialDesign:Chip Margin="0,0,8,0"
+                                                 Content="Fast Typing"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Secondary.Foreground}"
+                                                 Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="FlashOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
 
-                          <materialDesign:Chip Content="+ Enter"
-                                               IconBackground="{DynamicResource PrimaryHueLightBrush}"
-                                               IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}"
-                                               Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="KeyboardReturn" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                            <materialDesign:Chip Content="+ Enter"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}"
+                                                 Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="KeyboardReturn" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+                          </StackPanel>
+
+                          <!-- Image snippet properties -->
+                          <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                              <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding SnippetType}" Value="{x:Static models:SnippetType.Image}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </StackPanel.Style>
+
+                            <materialDesign:Chip Margin="0,0,8,0"
+                                                 Content="{Binding Delay, StringFormat='{}{0}s delay'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <materialDesign:Chip Margin="0,0,8,0"
+                                                 Content="{Binding DisplayDuration, StringFormat='{}{0}s display'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Secondary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ImageOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <materialDesign:Chip Content="{Binding Corner}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ArrowExpandAll" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+                          </StackPanel>
                         </StackPanel>
                       </Grid>
 
@@ -345,33 +509,87 @@
                         <StackPanel Margin="16,0,0,0"
                                     DockPanel.Dock="Right"
                                     Orientation="Horizontal">
-                          <materialDesign:Chip Margin="0,0,4,0"
-                                               Content="{Binding Delay, StringFormat='{}{0}s'}"
-                                               IconBackground="{DynamicResource PrimaryHueMidBrush}"
-                                               IconForeground="{DynamicResource PrimaryHueMidForegroundBrush}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="ClockOutline" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                          <!-- Text snippet chips -->
+                          <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                              <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding SnippetType}" Value="{x:Static models:SnippetType.Image}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </StackPanel.Style>
 
-                          <materialDesign:Chip Margin="0,0,4,0"
-                                               Content="Fast"
-                                               IconBackground="{DynamicResource SecondaryHueMidBrush}"
-                                               IconForeground="{DynamicResource SecondaryHueMidForegroundBrush}"
-                                               Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="FlashOutline" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                            <materialDesign:Chip Margin="0,0,4,0"
+                                                 Content="{Binding Delay, StringFormat='{}{0}s'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
 
-                          <materialDesign:Chip Content="↵"
-                                               IconBackground="{DynamicResource PrimaryHueLightBrush}"
-                                               IconForeground="{DynamicResource PrimaryHueLightForegroundBrush}"
-                                               Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <materialDesign:Chip.Icon>
-                              <materialDesign:PackIcon Kind="KeyboardReturn" />
-                            </materialDesign:Chip.Icon>
-                          </materialDesign:Chip>
+                            <materialDesign:Chip Margin="0,0,4,0"
+                                                 Content="Fast"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Secondary.Foreground}"
+                                                 Visibility="{Binding FastTyping, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="FlashOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <materialDesign:Chip Content="↵"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}"
+                                                 Visibility="{Binding AppendNewLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="KeyboardReturn" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+                          </StackPanel>
+
+                          <!-- Image snippet chips -->
+                          <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                              <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding SnippetType}" Value="{x:Static models:SnippetType.Image}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </StackPanel.Style>
+
+                            <materialDesign:Chip Margin="0,0,4,0"
+                                                 Content="{Binding Delay, StringFormat='{}{0}s'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <materialDesign:Chip Margin="0,0,4,0"
+                                                 Content="{Binding DisplayDuration, StringFormat='{}{0}s'}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Secondary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Secondary.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ImageOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <materialDesign:Chip Content="{Binding Corner}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="ArrowExpandAll" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+                          </StackPanel>
                         </StackPanel>
 
                         <!-- Name on the left -->

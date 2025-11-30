@@ -12,6 +12,8 @@ using GongSolutions.Wpf.DragDrop;
 
 using MaterialDesignThemes.Wpf;
 
+using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
+
 namespace AutoTyper.UI;
 
 public enum DialogResult
@@ -141,24 +143,37 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
         try
         {
             IsExecuting = true;
-            StatusMessage = $"Waiting {snippet.Delay} second(s) before typing...";
+            StatusMessage = $"Waiting {snippet.Delay} second(s) before executing...";
 
             // Start countdown
             if (snippet.Delay > 0)
             {
-                StatusMessage = $"Typing in {snippet.Delay} second(s)... Focus target window now!";
+                StatusMessage = snippet.SnippetType == SnippetType.Image
+                    ? $"Displaying in {snippet.Delay} second(s)..."
+                    : $"Typing in {snippet.Delay} second(s)... Focus target window now!";
+                
                 for (int i = (int)Math.Floor(snippet.Delay); i > 0; i--)
                 {
-                    StatusMessage = $"Typing in {i} second(s)... Focus target window now!";
+                    StatusMessage = snippet.SnippetType == SnippetType.Image
+                        ? $"Displaying in {i} second(s)..."
+                        : $"Typing in {i} second(s)... Focus target window now!";
                     await Task.Delay(1000);
                 }
             }
 
-            StatusMessage = "Typing...";
-            await _typingService.TypeSnippetAsync(snippet);
-
-            string targetWindow = _typingService.GetActiveWindowTitle();
-            StatusMessage = $"Typed snippet '{snippet.Name}' to {targetWindow}";
+            if (snippet.SnippetType == SnippetType.Image)
+            {
+                StatusMessage = "Displaying image...";
+                await _typingService.ExecuteSnippetAsync(snippet);
+                StatusMessage = $"Displayed image '{snippet.Name}'";
+            }
+            else
+            {
+                StatusMessage = "Typing...";
+                await _typingService.ExecuteSnippetAsync(snippet);
+                string targetWindow = _typingService.GetActiveWindowTitle();
+                StatusMessage = $"Typed snippet '{snippet.Name}' to {targetWindow}";
+            }
         }
         catch (Exception ex)
         {
@@ -196,12 +211,21 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
         // Set up dialog for editing
         var dialogViewModel = new AddSnippetViewModel
         {
+            SnippetType = snippet.SnippetType,
             Name = snippet.Name,
             Content = snippet.Content,
             FastTyping = snippet.FastTyping,
             Delay = snippet.Delay,
             AppendNewLine = snippet.AppendNewLine,
-            UseClipboard = snippet.UseClipboard
+            UseClipboard = snippet.UseClipboard,
+            ImagePath = snippet.ImagePath,
+            DisplayDuration = snippet.DisplayDuration,
+            Corner = snippet.Corner,
+            OffsetX = snippet.OffsetX,
+            OffsetY = snippet.OffsetY,
+            TargetWidth = snippet.TargetWidth,
+            TargetHeight = snippet.TargetHeight,
+            MaintainAspectRatio = snippet.MaintainAspectRatio
         };
 
         // Show dialog
@@ -259,41 +283,41 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
     // IDropTarget implementation for drag-drop reordering
     public void DragOver(IDropInfo dropInfo)
     {
-        if (dropInfo.Data is Snippet && dropInfo.TargetCollection != null)
-        {
-            dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-            dropInfo.Effects = System.Windows.DragDropEffects.Move;
-        }
-    }
-
-    public async void Drop(IDropInfo dropInfo)
+    if (dropInfo.Data is Snippet && dropInfo.TargetCollection != null)
     {
-        if (dropInfo.Data is Snippet sourceSnippet && dropInfo.TargetCollection != null)
+        dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+        dropInfo.Effects = System.Windows.DragDropEffects.Move;
+    }
+}
+
+public async void Drop(IDropInfo dropInfo)
+{
+    if (dropInfo.Data is Snippet sourceSnippet && dropInfo.TargetCollection != null)
+    {
+        int oldIndex = Snippets.IndexOf(sourceSnippet);
+        int newIndex = dropInfo.InsertIndex;
+
+        if (oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex)
         {
-            int oldIndex = Snippets.IndexOf(sourceSnippet);
-            int newIndex = dropInfo.InsertIndex;
-
-            if (oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex)
+            // Adjust new index if moving down
+            if (newIndex > oldIndex)
             {
-                // Adjust new index if moving down
-                if (newIndex > oldIndex)
-                {
-                    newIndex--;
-                }
-
-                // Move the snippet
-                Snippets.Move(oldIndex, newIndex);
-
-                // Update Order property for all snippets
-                for (int i = 0; i < Snippets.Count; i++)
-                {
-                    Snippets[i].Order = i;
-                }
-
-                // Persist the new order
-                await SaveSnippetsAsync();
-                StatusMessage = $"Reordered snippet: {sourceSnippet.Name}";
+                newIndex--;
             }
+
+            // Move the snippet
+            Snippets.Move(oldIndex, newIndex);
+
+            // Update Order property for all snippets
+            for (int i = 0; i < Snippets.Count; i++)
+            {
+                Snippets[i].Order = i;
+            }
+
+            // Persist the new order
+            await SaveSnippetsAsync();
+            StatusMessage = $"Reordered snippet: {sourceSnippet.Name}";
         }
     }
+}
 }
