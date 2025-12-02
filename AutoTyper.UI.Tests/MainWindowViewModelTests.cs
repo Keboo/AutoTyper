@@ -1,5 +1,6 @@
 using AutoTyper.UI.Models;
 using AutoTyper.UI.Services;
+using AutoTyper.UI.ViewModels;
 
 namespace AutoTyper.UI.Tests;
 
@@ -105,5 +106,51 @@ public partial class MainWindowViewModelTests
 
         //Assert
         Assert.False(viewModel.IsTopMost);
+    }
+
+    [Fact]
+    public void Snippet_TargetWindow_PropertiesDefaultCorrectly()
+    {
+        //Arrange & Act
+        Snippet snippet = new();
+
+        //Assert
+        Assert.False(snippet.UseTargetWindow);
+        Assert.Equal(string.Empty, snippet.TargetWindowTitle);
+    }
+
+    [Fact]
+    public void Snippet_TargetWindow_PropertiesCanBeSet()
+    {
+        //Arrange
+        Snippet snippet = new();
+
+        //Act
+        snippet.UseTargetWindow = true;
+        snippet.TargetWindowTitle = "Notepad";
+
+        //Assert
+        Assert.True(snippet.UseTargetWindow);
+        Assert.Equal("Notepad", snippet.TargetWindowTitle);
+    }
+
+    [Fact]
+    public void AddSnippetViewModel_GetSnippet_IncludesTargetWindowProperties()
+    {
+        //Arrange
+        AddSnippetViewModel viewModel = new()
+        {
+            Name = "Test Snippet",
+            Content = "Test content",
+            UseTargetWindow = true,
+            TargetWindowTitle = "Visual Studio"
+        };
+
+        //Act
+        Snippet snippet = viewModel.GetSnippet();
+
+        //Assert
+        Assert.True(snippet.UseTargetWindow);
+        Assert.Equal("Visual Studio", snippet.TargetWindowTitle);
     }
 }
