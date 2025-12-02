@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Xml.Linq;
 
 using AutoTyper.UI.Models;
 using AutoTyper.UI.Services;
@@ -63,6 +62,12 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
 
         // Initialize theme state
         IsDarkMode = _themeService.IsDarkMode;
+        
+        // Initialize view mode from saved settings
+        if (Enum.TryParse<ViewMode>(_themeService.ViewMode, out var viewMode))
+        {
+            CurrentViewMode = viewMode;
+        }
         
         // Load snippets on startup
         _ = LoadSnippetsAsync();
@@ -295,6 +300,7 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
     private void SetViewMode(ViewMode mode)
     {
         CurrentViewMode = mode;
+        _themeService.SetViewMode(mode.ToString());
     }
 
     // IDropTarget implementation for drag-drop reordering
