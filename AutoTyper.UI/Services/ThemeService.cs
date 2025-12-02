@@ -6,17 +6,20 @@ namespace AutoTyper.UI.Services;
 public class ThemeService
 {
     private readonly PaletteHelper _paletteHelper = new();
-    private static readonly string SettingsPath = Path.Combine(
+    private static string SettingsPath { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "AutoTyper",
         "settings.json");
 
     public virtual bool IsDarkMode { get; private set; }
+    public virtual string ViewMode { get; private set; } = "Full";
 
     public ThemeService()
     {
         // Load saved theme preference or default to light mode
-        IsDarkMode = LoadThemePreference();
+        var settings = LoadSettings();
+        IsDarkMode = settings.IsDarkMode;
+        ViewMode = settings.ViewMode ?? "Full";
         
         // Only apply theme if we're in a WPF application context
         if (System.Windows.Application.Current != null)
@@ -29,7 +32,7 @@ public class ThemeService
     {
         IsDarkMode = !IsDarkMode;
         ApplyTheme(IsDarkMode);
-        SaveThemePreference(IsDarkMode);
+        SaveSettings();
     }
 
     public void SetTheme(bool isDarkMode)
@@ -38,7 +41,16 @@ public class ThemeService
         {
             IsDarkMode = isDarkMode;
             ApplyTheme(IsDarkMode);
-            SaveThemePreference(IsDarkMode);
+            SaveSettings();
+        }
+    }
+
+    public void SetViewMode(string viewMode)
+    {
+        if (ViewMode != viewMode)
+        {
+            ViewMode = viewMode;
+            SaveSettings();
         }
     }
 
@@ -49,7 +61,7 @@ public class ThemeService
         _paletteHelper.SetTheme(theme);
     }
 
-    private bool LoadThemePreference()
+    private ThemeSettings LoadSettings()
     {
         try
         {
@@ -57,22 +69,26 @@ public class ThemeService
             {
                 string json = File.ReadAllText(SettingsPath);
                 var settings = System.Text.Json.JsonSerializer.Deserialize<ThemeSettings>(json);
-                return settings?.IsDarkMode ?? false;
+                return settings ?? new ThemeSettings();
             }
         }
         catch
         {
-            // If there's any error reading the file, default to light mode
+            // If there's any error reading the file, return defaults
         }
-        return false;
+        return new ThemeSettings();
     }
 
-    private void SaveThemePreference(bool isDarkMode)
+    private void SaveSettings()
     {
         try
         {
-            var settings = new ThemeSettings { IsDarkMode = isDarkMode };
-            string json = System.Text.Json.JsonSerializer.Serialize(settings);
+            var settings = new ThemeSettings 
+            { 
+                IsDarkMode = IsDarkMode,
+                ViewMode = ViewMode
+            };
+            string json = System.Text.Json.JsonSerializer.Serialize(settings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
             
             // Ensure directory exists
             string? directory = Path.GetDirectoryName(SettingsPath);
@@ -92,5 +108,6 @@ public class ThemeService
     private class ThemeSettings
     {
         public bool IsDarkMode { get; set; }
+        public string? ViewMode { get; set; }
     }
 }
