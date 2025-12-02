@@ -27,6 +27,12 @@ public partial class AddSnippetViewModel : ObservableObject
     private double _delay = 3.0;
 
     [ObservableProperty]
+    private bool _useTargetWindow;
+
+    [ObservableProperty]
+    private string _targetWindowTitle = string.Empty;
+
+    [ObservableProperty]
     private bool _appendNewLine;
 
     [ObservableProperty]
@@ -94,6 +100,8 @@ public partial class AddSnippetViewModel : ObservableObject
             Content = Content,
             FastTyping = FastTyping,
             Delay = Delay,
+            UseTargetWindow = UseTargetWindow,
+            TargetWindowTitle = TargetWindowTitle,
             AppendNewLine = AppendNewLine,
             UseClipboard = UseClipboard,
             ImagePath = ImagePath,

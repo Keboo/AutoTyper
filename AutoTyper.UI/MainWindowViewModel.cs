@@ -138,11 +138,27 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
 
         try
         {
-            StatusMessage = $"Waiting {snippet.Delay} second(s) before executing...";
-
-            // Start countdown
-            if (snippet.Delay > 0)
+            // Wait for target window or use delay
+            if (snippet.UseTargetWindow && !string.IsNullOrWhiteSpace(snippet.TargetWindowTitle))
             {
+                StatusMessage = $"Waiting for window '{snippet.TargetWindowTitle}'...";
+                
+                // Poll for the target window
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    string currentWindow = _typingService.GetActiveWindowTitle();
+                    if (currentWindow.Contains(snippet.TargetWindowTitle, StringComparison.OrdinalIgnoreCase))
+                    {
+                        break;
+                    }
+                    await Task.Delay(100, cancellationToken);
+                }
+            }
+            else if (snippet.Delay > 0)
+            {
+                StatusMessage = $"Waiting {snippet.Delay} second(s) before executing...";
+
+                // Start countdown
                 StatusMessage = snippet.SnippetType == SnippetType.Image
                     ? $"Displaying in {snippet.Delay} second(s)..."
                     : $"Typing in {snippet.Delay} second(s)... Focus target window now!";
@@ -213,6 +229,8 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
             Content = snippet.Content,
             FastTyping = snippet.FastTyping,
             Delay = snippet.Delay,
+            UseTargetWindow = snippet.UseTargetWindow,
+            TargetWindowTitle = snippet.TargetWindowTitle,
             AppendNewLine = snippet.AppendNewLine,
             UseClipboard = snippet.UseClipboard,
             ImagePath = snippet.ImagePath,

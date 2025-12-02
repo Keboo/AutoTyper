@@ -77,7 +77,8 @@
                          VerticalScrollBarVisibility="Auto" />
 
                 <!-- Delay -->
-                <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                <StackPanel Margin="0,0,0,10" Orientation="Horizontal"
+                            Visibility="{Binding UseTargetWindow, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                   <TextBlock Width="120"
                              VerticalAlignment="Center"
                              Text="Delay (seconds):" />
@@ -85,6 +86,18 @@
                            materialDesign:HintAssist.Hint="3.0"
                            Text="{Binding Delay}" />
                 </StackPanel>
+
+                <!-- Use Target Window Toggle -->
+                <CheckBox Margin="0,0,0,10"
+                          Content="Wait for target window instead of delay"
+                          IsChecked="{Binding UseTargetWindow}" />
+
+                <!-- Target Window Title -->
+                <TextBox Margin="0,0,0,15"
+                         materialDesign:HintAssist.Hint="Window Title (contains match)"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Text="{Binding TargetWindowTitle}"
+                         Visibility="{Binding UseTargetWindow, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!-- Fast Typing -->
                 <CheckBox Margin="0,0,0,10"
@@ -449,12 +462,25 @@
                               </Style>
                             </StackPanel.Style>
                             
+                            <!-- Delay chip (shown when not using target window) -->
                             <materialDesign:Chip Margin="0,0,8,0"
                                                  Content="{Binding Delay, StringFormat='{}{0}s delay'}"
                                                  IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
-                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                                 Visibility="{Binding UseTargetWindow, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                               <materialDesign:Chip.Icon>
                                 <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <!-- Target window chip (shown when using target window) -->
+                            <materialDesign:Chip Margin="0,0,8,0"
+                                                 Content="{Binding TargetWindowTitle}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                                 Visibility="{Binding UseTargetWindow, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="WindowMaximize" />
                               </materialDesign:Chip.Icon>
                             </materialDesign:Chip>
 
@@ -550,12 +576,25 @@
                               </Style>
                             </StackPanel.Style>
 
+                            <!-- Delay chip (shown when not using target window) -->
                             <materialDesign:Chip Margin="0,0,4,0"
                                                  Content="{Binding Delay, StringFormat='{}{0}s'}"
                                                  IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
-                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                                 Visibility="{Binding UseTargetWindow, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                               <materialDesign:Chip.Icon>
                                 <materialDesign:PackIcon Kind="ClockOutline" />
+                              </materialDesign:Chip.Icon>
+                            </materialDesign:Chip>
+
+                            <!-- Target window chip (shown when using target window) -->
+                            <materialDesign:Chip Margin="0,0,4,0"
+                                                 Content="{Binding TargetWindowTitle}"
+                                                 IconBackground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                 IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                                 Visibility="{Binding UseTargetWindow, Converter={StaticResource BooleanToVisibilityConverter}}">
+                              <materialDesign:Chip.Icon>
+                                <materialDesign:PackIcon Kind="WindowMaximize" />
                               </materialDesign:Chip.Icon>
                             </materialDesign:Chip>
 
