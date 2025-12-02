@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 using AutoTyper.DeviceEmulator.Native;
@@ -97,42 +98,45 @@ public class KeyboardController : BaseController
     };
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:AutoTyper.DeviceEmulator.KeyboardController" /> with no arguments.
+    /// The minimum time needed between key presses.
     /// </summary>
-    public KeyboardController()
-    {
-    }
-
-    /// <summary>
-    /// Default constructor with CancellationToken.
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    public KeyboardController(CancellationToken cancellationToken)
-        : base(cancellationToken)
-    {
-    }
+    public TimeSpan MinimumKeyPressInterval { get; set; } = TimeSpan.FromMilliseconds(20);
 
     /// <summary>
     /// Method that sends input to press and release the VirtualKeyCode. 
     /// </summary>
     /// <param name="virtualKeyCode"></param>
-    public void Type(VirtualKeyCode virtualKeyCode)
+    /// <param name="cancellationToken"></param>
+    public async Task TypeAsync(VirtualKeyCode virtualKeyCode, CancellationToken cancellationToken)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         PressKey(virtualKeyCode);
+        await Task.Delay(MinimumKeyPressInterval, cancellationToken);
         ReleaseKey(virtualKeyCode);
+    }
+
+    /// <summary>
+    /// Method that sends inputs to type an array of VirtualKeyCodes.
+    /// </summary>
+    /// <param name="cancelationToken"></param>
+    /// <param name="virtualKeyCodeArray"></param>
+    public async Task TypeAsync(CancellationToken cancelationToken, params VirtualKeyCode[] virtualKeyCodeArray)
+    {
+        foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodeArray)
+        {
+            PressKey(aVirtualKeyCode);
+            await Task.Delay(MinimumKeyPressInterval, cancelationToken);
+            ReleaseKey(aVirtualKeyCode);
+        }
     }
 
     /// <summary>
     /// Method that sends inputs to type a given string.
     /// </summary>
     /// <param name="string">The string to type</param>
-    public Task TypeStringAsync(string @string)
+    /// <param name="cancellationToken"></param>
+    public Task TypeStringAsync(string @string, CancellationToken cancellationToken)
     {
-        return TypeStringAsync(@string, TimeSpan.Zero, TimeSpan.Zero);
+        return TypeStringAsync(@string, TimeSpan.Zero, TimeSpan.Zero, cancellationToken);
     }
 
     /// <summary>
@@ -140,18 +144,20 @@ public class KeyboardController : BaseController
     /// </summary>
     /// <param name="string">The string to type</param>
     /// <param name="keyStrokeDelay">The time between keystrokes</param>
-    public Task TypeStringAsync(string @string, TimeSpan keyStrokeDelay)
+    /// <param name="cancellationToken"></param>
+    public Task TypeStringAsync(string @string, TimeSpan keyStrokeDelay, CancellationToken cancellationToken)
     {
-        return TypeStringAsync(@string, keyStrokeDelay, TimeSpan.Zero);
+        return TypeStringAsync(@string, keyStrokeDelay, TimeSpan.Zero, cancellationToken);
     }
 
     /// <summary>
     /// Method that sends inputs to type a given string with natural typing interval.
     /// </summary>
     /// <param name="string"></param>
-    public Task TypeStringNaturallyAsync(string @string)
+    /// <param name="cancellationToken"></param>
+    public Task TypeStringNaturallyAsync(string @string, CancellationToken cancellationToken)
     {
-        return TypeStringAsync(@string, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(20));
+        return TypeStringAsync(@string, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(20), cancellationToken);
     }
 
 
@@ -161,19 +167,25 @@ public class KeyboardController : BaseController
     /// <param name="string"></param>
     /// <param name="keystrokeDelay">The amount of time between keystrokes</param>
     /// <param name="keystrokeVariance">The amount of variance allowed between key stroke delay.</param>
-    public async Task TypeStringAsync(string @string, TimeSpan keystrokeDelay, TimeSpan keystrokeVariance)
+    /// <param name="cancellationToken"></param>
+    public async Task TypeStringAsync(string @string, TimeSpan keystrokeDelay, TimeSpan keystrokeVariance, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(@string))
         {
             return;
         }
+        
+        // Normalize line endings to prevent \r\n from being typed as two separate newlines
+        @string = @string.Replace("\r\n", "\n");
+        
         int characterIndex = 0;
         char[] array = @string.ToCharArray();
         foreach (char c in array)
         {
             characterIndex++;
-            TypeChar(c, RequiresShift(c));
-            if ((keystrokeDelay != TimeSpan.Zero || keystrokeVariance != TimeSpan.Zero) && characterIndex < @string.Length)
+            await TypeCharAsync(c, RequiresShift(c), cancellationToken);
+            
+            if (characterIndex < @string.Length)
             {
                 TimeSpan delay = keystrokeDelay;
                 if (keystrokeVariance != TimeSpan.Zero)
@@ -181,7 +193,14 @@ public class KeyboardController : BaseController
                     int milliseconds = (int)Math.Round(keystrokeVariance.TotalMilliseconds);
                     delay += TimeSpan.FromMilliseconds(Random.Shared.Next(-milliseconds, milliseconds));
                 }
-                await DelayAsync(delay);
+                
+                // Ensure minimum delay between characters to prevent dropped keystrokes
+                if (delay < MinimumKeyPressInterval)
+                {
+                    delay = MinimumKeyPressInterval;
+                }
+                
+                await Task.Delay(delay, cancellationToken);
             }
         }
     }
@@ -207,33 +226,13 @@ public class KeyboardController : BaseController
     }
 
     /// <summary>
-    /// Method that sends inputs to type an array of VirtualKeyCodes.
-    /// </summary>
-    /// <param name="virtualKeyCodeArray"></param>
-    public void Type(params VirtualKeyCode[] virtualKeyCodeArray)
-    {
-        if (RunMode == 4)
-        {
-            return;
-        }
-        foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodeArray)
-        {
-            PressKey(aVirtualKeyCode);
-            ReleaseKey(aVirtualKeyCode);
-        }
-    }
-
-    /// <summary>
     /// Method that sends inputs to type a char.
     /// </summary>
     /// <param name="char"></param>
     /// <param name="shiftDown"></param>
-    public void TypeChar(char @char, bool shiftDown)
+    /// <param name="cancellationToken"></param>
+    public async Task TypeCharAsync(char @char, bool shiftDown, CancellationToken cancellationToken)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         char key = char.ToLower(@char);
         if (!VirtualKeyCodeDictionary.TryGetValue(key, out var value))
         {
@@ -244,6 +243,7 @@ public class KeyboardController : BaseController
             PressKey(VirtualKeyCode.SHIFT);
         }
         PressKey(value);
+        await Task.Delay(MinimumKeyPressInterval, cancellationToken);
         ReleaseKey(value);
         if (shiftDown)
         {
@@ -251,17 +251,14 @@ public class KeyboardController : BaseController
         }
     }
 
+
     /// <summary>
     /// Method that simulates holding down of modifier key and pressing VirtualKeyCode.
     /// </summary>
     /// <param name="modifierVirtualKeyCode"></param>
     /// <param name="virtualKeyCode"></param>
-    public void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
+    public static void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         PressKey(modifierVirtualKeyCode);
         PressKey(virtualKeyCode);
         ReleaseKey(virtualKeyCode);
@@ -273,12 +270,8 @@ public class KeyboardController : BaseController
     /// </summary>
     /// <param name="modifierVirtualKeyCode"></param>
     /// <param name="virtualKeyCodes"></param>
-    public void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
+    public static void ModifiedKeyStroke(VirtualKeyCode modifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         PressKey(modifierVirtualKeyCode);
         foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodes)
         {
@@ -294,12 +287,8 @@ public class KeyboardController : BaseController
     /// <param name="firstModifierVirtualKeyCode"></param>
     /// <param name="secondModifierVirtualKeyCode"></param>
     /// <param name="virtualKeyCode"></param>
-    public void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
+    public static void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, VirtualKeyCode virtualKeyCode)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         PressKey(firstModifierVirtualKeyCode);
         PressKey(secondModifierVirtualKeyCode);
         PressKey(virtualKeyCode);
@@ -314,12 +303,8 @@ public class KeyboardController : BaseController
     /// <param name="firstModifierVirtualKeyCode"></param>
     /// <param name="secondModifierVirtualKeyCode"></param>
     /// <param name="virtualKeyCodes"></param>
-    public void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
+    public static void ModifiedKeyStroke(VirtualKeyCode firstModifierVirtualKeyCode, VirtualKeyCode secondModifierVirtualKeyCode, params VirtualKeyCode[] virtualKeyCodes)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         PressKey(firstModifierVirtualKeyCode);
         PressKey(secondModifierVirtualKeyCode);
         foreach (VirtualKeyCode aVirtualKeyCode in virtualKeyCodes)
@@ -335,12 +320,8 @@ public class KeyboardController : BaseController
     /// Method that sends input to simulate a single key press event.
     /// </summary>
     /// <param name="virtualKeyCode"></param>
-    public void PressKey(VirtualKeyCode virtualKeyCode)
+    public static void PressKey(VirtualKeyCode virtualKeyCode)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         Input[] array = new Input[1];
         array[0].Type = 1u;
         array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;
@@ -355,12 +336,8 @@ public class KeyboardController : BaseController
     /// Method that sends input to simulate a single key release event.
     /// </summary>
     /// <param name="virtualKeyCode"></param>
-    public void ReleaseKey(VirtualKeyCode virtualKeyCode)
+    public static void ReleaseKey(VirtualKeyCode virtualKeyCode)
     {
-        if (RunMode == 4)
-        {
-            return;
-        }
         Input[] array = new Input[1];
         array[0].Type = 1u;
         array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;

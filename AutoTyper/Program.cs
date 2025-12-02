@@ -75,19 +75,19 @@ public sealed partial class Program
             IntPtr activeWindow = NativeMethods.GetForegroundWindow();
             string windowText = GetWindowText(activeWindow);
 
-            KeyboardController kc = new(token);
+            KeyboardController kc = new();
             if (parseResult.GetValue(fastTyping))
             {
-                await kc.TypeStringNaturallyAsync(text);
+                await kc.TypeStringNaturallyAsync(text, token);
             }
             else
             {
-                await kc.TypeStringAsync(text);
+                await kc.TypeStringAsync(text, token);
             }
 
             if (parseResult.GetValue(addNewLine))
             {
-                kc.Type(VirtualKeyCode.RETURN);
+                await kc.TypeAsync(VirtualKeyCode.RETURN, token);
             }
 
             if (verboseValue)

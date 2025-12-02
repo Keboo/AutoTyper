@@ -32,13 +32,8 @@ public class TypingService
         }
     }
 
-    public async Task TypeSnippetAsync(Snippet snippet, CancellationToken cancellationToken = default)
+    public async Task TypeSnippetAsync(Snippet snippet, CancellationToken cancellationToken)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            throw new PlatformNotSupportedException("This feature only works on Windows");
-        }
-
         // Get the content to type - either from clipboard or snippet content
         string contentToType = snippet.Content;
         if (snippet.UseClipboard)
@@ -62,20 +57,20 @@ public class TypingService
         }
 
         // Type the content using the keyboard controller
-        KeyboardController kc = new(cancellationToken);
+        KeyboardController kc = new();
         if (snippet.FastTyping)
         {
-            await kc.TypeStringAsync(contentToType);
+            await kc.TypeStringAsync(contentToType, cancellationToken);
         }
         else
         {
-            await kc.TypeStringNaturallyAsync(contentToType);
+            await kc.TypeStringNaturallyAsync(contentToType, cancellationToken);
         }
 
         // Append new line if requested
         if (snippet.AppendNewLine)
         {
-            kc.Type(VirtualKeyCode.RETURN);
+            await kc.TypeAsync(VirtualKeyCode.RETURN, cancellationToken);
         }
     }
 

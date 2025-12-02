@@ -78,18 +78,6 @@ public sealed class MouseController : BaseController
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:AutoTyper.DeviceEmulator.MouseController" /> with
-    /// <see cref="T:System.Threading.CancellationToken" /> as a parameter.
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    public MouseController(CancellationToken cancellationToken)
-        : base(cancellationToken)
-    {
-        DesktopWidth = SystemInfo.PrimaryMonitorSize.Width;
-        DesktopHeight = SystemInfo.PrimaryMonitorSize.Height;
-    }
-
-    /// <summary>
     /// Provides all Screen display information.
     /// </summary>
     public static void ShowDisplayInfo()
@@ -113,11 +101,7 @@ public sealed class MouseController : BaseController
     public System.Drawing.Point GetMouseCursorPosition()
     {
         System.Drawing.Point position = CursorHelper.Position;
-        if (UseLogicalCoordinate)
-        {
-            return position;
-        }
-        return LogicalToPhysicalPoint(position);
+        return UseLogicalCoordinate ? position : LogicalToPhysicalPoint(position);
     }
 
     /// <summary>
@@ -137,10 +121,7 @@ public sealed class MouseController : BaseController
             inputBuffer.Data.Mouse.MouseData = scrollAmount;
         }
         inputList = [inputBuffer];
-        if (RunMode == 0)
-        {
-            _ = SafeNativeMethods.SendInput(1u, [.. inputList], Marshal.SizeOf<Input>());
-        }
+        _ = SafeNativeMethods.SendInput(1u, [.. inputList], Marshal.SizeOf<Input>());
         inputList.Clear();
     }
 
@@ -230,7 +211,7 @@ public sealed class MouseController : BaseController
     {
         int num = Random.Shared.Next(0, 20);
         ButtonDown(aMouseButton);
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 30));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 30));
         ButtonUp(aMouseButton);
     }
 
@@ -381,10 +362,7 @@ public sealed class MouseController : BaseController
         inputBuffer.Data.Mouse.X = (int)(65535f * (float)aPoint.X / (float)DesktopWidth);
         inputBuffer.Data.Mouse.Y = (int)(65535f * (float)aPoint.Y / (float)DesktopHeight);
         inputList = [inputBuffer];
-        if (RunMode == 0)
-        {
-            _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
-        }
+        _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
     }
 
     /// <summary>
@@ -407,10 +385,7 @@ public sealed class MouseController : BaseController
         inputBuffer.Data.Mouse.X = x;
         inputBuffer.Data.Mouse.Y = y;
         inputList = [inputBuffer];
-        if (RunMode == 0)
-        {
-            _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
-        }
+        _ = SafeNativeMethods.SendInput((uint)inputList.Count, [.. inputList], Marshal.SizeOf<Input>());
     }
 
     /// <summary>
@@ -457,7 +432,7 @@ public sealed class MouseController : BaseController
                 num2 = num2 / 10 + ((num2 > 0) ? 1 : (-1));
             }
             RelativeMoveSendInput(num, num2);
-            await DelayAsync(TimeSpan.FromMilliseconds(20));
+            await Task.Delay(TimeSpan.FromMilliseconds(20));
         }
     }
 
@@ -486,10 +461,10 @@ public sealed class MouseController : BaseController
                 num3 = destinationY;
             }
             AbsoluteSinglePointMove((int)num2, (int)num3);
-            await DelayAsync(TimeSpan.FromMilliseconds(30));
+            await Task.Delay(TimeSpan.FromMilliseconds(30));
         }
         AbsoluteSinglePointMove(destinationX, destinationY);
-        await DelayAsync(TimeSpan.FromMilliseconds(5));
+        await Task.Delay(TimeSpan.FromMilliseconds(5));
     }
 
     /// <summary>
@@ -530,7 +505,7 @@ public sealed class MouseController : BaseController
     public async Task MoveClickAsync(int destinationX, int destinationY)
     {
         await MoveAsync(destinationX, destinationY);
-        await DelayAsync(TimeSpan.FromMilliseconds(50));
+        await Task.Delay(TimeSpan.FromMilliseconds(50));
         await ClickAsync();
     }
 
@@ -554,7 +529,7 @@ public sealed class MouseController : BaseController
         int num = Random.Shared.Next(5, 20);
         await MoveAsync(destinationX, destinationY);
         LeftDown();
-        await DelayAsync(waitPeriod + TimeSpan.FromMilliseconds(num));
+        await Task.Delay(waitPeriod + TimeSpan.FromMilliseconds(num));
         LeftUp();
     }
 
@@ -577,7 +552,7 @@ public sealed class MouseController : BaseController
         int num = Random.Shared.Next(5, 20);
         ButtonDown(MouseButton.Left);
         ButtonDown(MouseButton.Right);
-        await DelayAsync(holdPeriod + TimeSpan.FromMilliseconds(num));
+        await Task.Delay(holdPeriod + TimeSpan.FromMilliseconds(num));
         ButtonUp(MouseButton.Left);
         ButtonUp(MouseButton.Right);
     }
@@ -591,7 +566,7 @@ public sealed class MouseController : BaseController
     public async Task MoveClickDelayAsync(int destinationX, int destinationY, TimeSpan waitPeriod)
     {
         await MoveClickAsync(destinationX, destinationY);
-        await DelayAsync(waitPeriod);
+        await Task.Delay(waitPeriod);
     }
 
     /// <summary>
@@ -613,7 +588,7 @@ public sealed class MouseController : BaseController
     public async Task MoveDelayClickAsync(int x, int y, TimeSpan waitPeriod)
     {
         await MoveAsync(x, y);
-        await DelayAsync(waitPeriod);
+        await Task.Delay(waitPeriod);
         await ClickAsync();
     }
 
@@ -634,7 +609,7 @@ public sealed class MouseController : BaseController
     {
         int num = Random.Shared.Next(0, 20);
         await ClickAsync();
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 35));
         await ClickAsync();
     }
 
@@ -645,9 +620,9 @@ public sealed class MouseController : BaseController
     {
         int num = Random.Shared.Next(0, 20);
         ButtonDown(MouseButton.Middle);
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 35));
         ButtonUp(MouseButton.Middle);
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 35));
     }
 
     /// <summary>
@@ -657,9 +632,9 @@ public sealed class MouseController : BaseController
     {
         int num = Random.Shared.Next(0, 20);
         ButtonDown(MouseButton.Right);
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 35));
         ButtonUp(MouseButton.Right);
-        await DelayAsync(TimeSpan.FromMilliseconds(num + 35));
+        await Task.Delay(TimeSpan.FromMilliseconds(num + 35));
     }
 
     /// <summary>
