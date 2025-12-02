@@ -2,6 +2,8 @@ using System.Runtime.InteropServices;
 
 using AutoTyper.DeviceEmulator.Native;
 
+using static System.Runtime.CompilerServices.RuntimeHelpers;
+
 namespace AutoTyper.DeviceEmulator;
 
 /// <summary>
@@ -98,7 +100,7 @@ public class KeyboardController : BaseController
     /// <summary>
     /// The minimum time needed between key presses.
     /// </summary>
-    public TimeSpan MinimumKeyPressInterval { get; set; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan MinimumKeyPressInterval { get; set; } = TimeSpan.FromMilliseconds(10);
 
     /// <summary>
     /// Method that sends input to press and release the VirtualKeyCode. 
@@ -323,8 +325,8 @@ public class KeyboardController : BaseController
         Input[] array = new Input[1];
         array[0].Type = 1u;
         array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;
-        array[0].Data.Keyboard.Scan = 0;
-        array[0].Data.Keyboard.Flags = 0u;
+        array[0].Data.Keyboard.Scan = (ushort)(SafeNativeMethods.MapVirtualKey((uint)virtualKeyCode, 0) & 0xFFU);
+        array[0].Data.Keyboard.Flags = IsExtendedKey(virtualKeyCode) ? (uint)KeyboardFlag.ExtendedKey : 0;
         array[0].Data.Keyboard.Time = 0u;
         array[0].Data.Keyboard.ExtraInfo = IntPtr.Zero;
         SendKeyEvent(array);
@@ -339,8 +341,10 @@ public class KeyboardController : BaseController
         Input[] array = new Input[1];
         array[0].Type = 1u;
         array[0].Data.Keyboard.KeyCode = (ushort)virtualKeyCode;
-        array[0].Data.Keyboard.Scan = 0;
-        array[0].Data.Keyboard.Flags = 2u;
+        array[0].Data.Keyboard.Scan = (ushort)(SafeNativeMethods.MapVirtualKey((uint)virtualKeyCode, 0) & 0xFFU);
+        array[0].Data.Keyboard.Flags = (uint)(IsExtendedKey(virtualKeyCode)
+                                            ? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey
+                                            : KeyboardFlag.KeyUp);
         array[0].Data.Keyboard.Time = 0u;
         array[0].Data.Keyboard.ExtraInfo = IntPtr.Zero;
         SendKeyEvent(array);
@@ -352,7 +356,11 @@ public class KeyboardController : BaseController
     /// <param name="input"></param>
     private static void SendKeyEvent(Input[] input)
     {
-        uint _ = SafeNativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf<Input>());
+        uint successful = SafeNativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf<Input>());
+        if (successful != input.Length)
+        {
+            //TODO:
+        }
     }
 
     /// <summary>
@@ -361,7 +369,7 @@ public class KeyboardController : BaseController
     /// </summary>
     /// <param name="text">Text to paste</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    public static async Task PasteTextAsync(string text, CancellationToken cancellationToken = default)
+    public async Task PasteTextAsync(string text, CancellationToken cancellationToken = default)
     {
         // Store original clipboard content
         string? originalClipboard = null;
@@ -379,14 +387,10 @@ public class KeyboardController : BaseController
             // Small delay to ensure clipboard is set
             await Task.Delay(50, cancellationToken);
             
-            // Simulate Ctrl+V
-            var controller = new KeyboardController();
-            controller.MinimumKeyPressInterval = TimeSpan.FromMilliseconds(20);
-            
             PressKey(VirtualKeyCode.CONTROL);
-            await Task.Delay(TimeSpan.FromMilliseconds(20), cancellationToken);
+            await Task.Delay(MinimumKeyPressInterval, cancellationToken);
             PressKey(VirtualKeyCode.VK_V);
-            await Task.Delay(TimeSpan.FromMilliseconds(20), cancellationToken);
+            await Task.Delay(MinimumKeyPressInterval, cancellationToken);
             ReleaseKey(VirtualKeyCode.VK_V);
             ReleaseKey(VirtualKeyCode.CONTROL);
         }
@@ -403,5 +407,28 @@ public class KeyboardController : BaseController
                 catch { }
             }
         }
+    }
+
+    private static bool IsExtendedKey(VirtualKeyCode keyCode)
+    {
+        return keyCode == VirtualKeyCode.MENU ||
+            keyCode == VirtualKeyCode.LMENU ||
+            keyCode == VirtualKeyCode.RMENU ||
+            keyCode == VirtualKeyCode.CONTROL ||
+            keyCode == VirtualKeyCode.RCONTROL ||
+            keyCode == VirtualKeyCode.INSERT ||
+            keyCode == VirtualKeyCode.DELETE ||
+            keyCode == VirtualKeyCode.HOME ||
+            keyCode == VirtualKeyCode.END ||
+            keyCode == VirtualKeyCode.PRIOR ||
+            keyCode == VirtualKeyCode.NEXT ||
+            keyCode == VirtualKeyCode.RIGHT ||
+            keyCode == VirtualKeyCode.UP ||
+            keyCode == VirtualKeyCode.LEFT ||
+            keyCode == VirtualKeyCode.DOWN ||
+            keyCode == VirtualKeyCode.NUMLOCK ||
+            keyCode == VirtualKeyCode.CANCEL ||
+            keyCode == VirtualKeyCode.SNAPSHOT ||
+            keyCode == VirtualKeyCode.DIVIDE;
     }
 }

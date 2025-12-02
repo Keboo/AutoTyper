@@ -4,8 +4,6 @@ using AutoTyper.DeviceEmulator;
 using AutoTyper.DeviceEmulator.Native;
 using AutoTyper.UI.Models;
 
-using static System.Net.Mime.MediaTypeNames;
-
 namespace AutoTyper.UI.Services;
 
 public class TypingService
@@ -58,24 +56,9 @@ public class TypingService
 
         // Type the content using the keyboard controller
         KeyboardController kc = new();
-        
-        // For very large text (>500 chars), use paste for speed
-        if (snippet.FastTyping && contentToType.Length > 500)
+        if (snippet.FastTyping)
         {
-            await KeyboardController.PasteTextAsync(contentToType, cancellationToken);
-        }
-        else if (snippet.FastTyping)
-        {
-            // Try message-based typing first (fastest)
-            IntPtr foregroundWindow = MessageBasedTyping.GetForegroundWindow();
-            if (foregroundWindow != IntPtr.Zero)
-            {
-                MessageBasedTyping.PostTextCharacters(foregroundWindow, contentToType);
-            }
-            else
-            {
-                await kc.TypeStringAsync(contentToType, cancellationToken);
-            }
+            await kc.PasteTextAsync(contentToType, cancellationToken);
         }
         else
         {

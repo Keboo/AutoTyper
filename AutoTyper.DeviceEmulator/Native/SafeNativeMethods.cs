@@ -231,4 +231,13 @@ internal class SafeNativeMethods
     /// <returns></returns>
     [DllImport("User32.dll")]
     internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+
+    /// <summary>
+    /// Used to find the keyboard input scan code for single key input. Some applications do not receive the input when scan is not set.
+    /// </summary>
+    /// <param name="uCode"></param>
+    /// <param name="uMapType"></param>
+    /// <returns></returns>
+    [DllImport("user32.dll")]
+    public static extern uint MapVirtualKey(uint uCode, uint uMapType);
 }
