@@ -703,10 +703,22 @@
                                 Padding="16,8"
                                 Mode="PrimaryLight">
         <DockPanel>
-          <materialDesign:PackIcon Margin="0,0,8,0"
-                                   VerticalAlignment="Center"
-                                   Kind="Information" />
-          <TextBlock VerticalAlignment="Center" Text="{Binding StatusMessage}" />
+          <Button DockPanel.Dock="Right"
+                  Margin="8,0,0,0"
+                  Command="{Binding ExecuteSnippetCancelCommand}"
+                  Content="CANCEL"
+                  Style="{StaticResource MaterialDesignRaisedButton}"
+                  Visibility="{Binding ExecuteSnippetCommand.IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button.CommandParameter>
+              <materialDesign:PackIcon Kind="Cancel" />
+            </Button.CommandParameter>
+          </Button>
+          <StackPanel Orientation="Horizontal">
+            <materialDesign:PackIcon Margin="0,0,8,0"
+                                     VerticalAlignment="Center"
+                                     Kind="Information" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding StatusMessage}" />
+          </StackPanel>
         </DockPanel>
       </materialDesign:ColorZone>
     </Grid>

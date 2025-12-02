@@ -80,27 +80,32 @@ public class ImageDisplayService
 
         // Display the window on the UI thread
         ImageDisplayWindow? window = null;
-        await WpfApplication.Current.Dispatcher.InvokeAsync(() =>
-        {
-            window = new ImageDisplayWindow
-            {
-                Left = windowPosition.X,
-                Top = windowPosition.Y
-            };
-            window.SetImage(image);
-            window.Show();
-        }, DispatcherPriority.Normal, cancellationToken);
-
-        // Wait for the specified duration
-        await Task.Delay(TimeSpan.FromSeconds(snippet.DisplayDuration), cancellationToken);
-
-        // Close the window
-        if (window != null)
+        try
         {
             await WpfApplication.Current.Dispatcher.InvokeAsync(() =>
             {
-                window.Close();
+                window = new ImageDisplayWindow
+                {
+                    Left = windowPosition.X,
+                    Top = windowPosition.Y
+                };
+                window.SetImage(image);
+                window.Show();
             }, DispatcherPriority.Normal, cancellationToken);
+
+            // Wait for the specified duration
+            await Task.Delay(TimeSpan.FromSeconds(snippet.DisplayDuration), cancellationToken);
+        }
+        finally
+        {
+            // Close the window
+            if (window != null)
+            {
+                await WpfApplication.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    window.Close();
+                }, DispatcherPriority.Normal, CancellationToken.None);
+            }
         }
     }
 

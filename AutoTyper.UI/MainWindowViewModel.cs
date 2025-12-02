@@ -46,10 +46,6 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
     public ObservableCollection<Snippet> Snippets { get; } = [];
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ExecuteSnippetCommand))]
-    private bool _isExecuting;
-
-    [ObservableProperty]
     private string _statusMessage = "Ready";
 
     public MainWindowViewModel(
@@ -132,8 +128,8 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanExecuteSnippet))]
-    private async Task ExecuteSnippetAsync(Snippet? snippet)
+    [RelayCommand(CanExecute = nameof(CanExecuteSnippet), IncludeCancelCommand = true)]
+    private async Task ExecuteSnippetAsync(Snippet? snippet, CancellationToken cancellationToken)
     {
         if (snippet is null)
         {
@@ -142,7 +138,6 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
 
         try
         {
-            IsExecuting = true;
             StatusMessage = $"Waiting {snippet.Delay} second(s) before executing...";
 
             // Start countdown
@@ -157,35 +152,37 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
                     StatusMessage = snippet.SnippetType == SnippetType.Image
                         ? $"Displaying in {i} second(s)..."
                         : $"Typing in {i} second(s)... Focus target window now!";
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, cancellationToken);
                 }
             }
 
             if (snippet.SnippetType == SnippetType.Image)
             {
                 StatusMessage = "Displaying image...";
-                await _typingService.ExecuteSnippetAsync(snippet);
+                await _typingService.ExecuteSnippetAsync(snippet, cancellationToken);
                 StatusMessage = $"Displayed image '{snippet.Name}'";
             }
             else
             {
                 StatusMessage = "Typing...";
-                await _typingService.ExecuteSnippetAsync(snippet);
+                await _typingService.ExecuteSnippetAsync(snippet, cancellationToken);
                 string targetWindow = _typingService.GetActiveWindowTitle();
                 StatusMessage = $"Typed snippet '{snippet.Name}' to {targetWindow}";
             }
+        }
+        catch (OperationCanceledException)
+        {
+            StatusMessage = snippet.SnippetType == SnippetType.Image
+                ? "Image display cancelled"
+                : "Typing cancelled";
         }
         catch (Exception ex)
         {
             StatusMessage = $"Error: {ex.Message}";
         }
-        finally
-        {
-            IsExecuting = false;
-        }
     }
 
-    private bool CanExecuteSnippet(Snippet? snippet) => !IsExecuting && snippet is not null;
+    private static bool CanExecuteSnippet(Snippet? snippet) => snippet is not null;
 
     [RelayCommand]
     private async Task DeleteSnippetAsync(Snippet? snippet)
