@@ -16,7 +16,7 @@ namespace AutoTyper.UI.Services;
 
 public class ImageDisplayService
 {
-    public async Task DisplayImageAsync(Snippet snippet, CancellationToken cancellationToken = default)
+    public async Task DisplayImageAsync(Snippet snippet, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(snippet);
 
