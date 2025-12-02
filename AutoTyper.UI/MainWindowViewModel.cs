@@ -141,12 +141,12 @@ public partial class MainWindowViewModel : ObservableObject, IDropTarget
             // Wait for target window or use delay
             if (snippet.UseTargetWindow && !string.IsNullOrWhiteSpace(snippet.TargetWindowTitle))
             {
-                StatusMessage = $"Waiting for window '{snippet.TargetWindowTitle}'...";
+                StatusMessage = $"Waiting for window '{snippet.TargetWindowTitle}'... (click Cancel to stop)";
                 
                 // Poll for the target window
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    string currentWindow = _typingService.GetActiveWindowTitle();
+                    string currentWindow = _typingService.GetActiveWindowTitle() ?? string.Empty;
                     if (currentWindow.Contains(snippet.TargetWindowTitle, StringComparison.OrdinalIgnoreCase))
                     {
                         break;
