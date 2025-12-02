@@ -1,6 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 using AutoTyper.DeviceEmulator.Native;
 
@@ -355,5 +353,55 @@ public class KeyboardController : BaseController
     private static void SendKeyEvent(Input[] input)
     {
         uint _ = SafeNativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf<Input>());
+    }
+
+    /// <summary>
+    /// Pastes text by setting clipboard and simulating Ctrl+V.
+    /// Very fast for large text blocks.
+    /// </summary>
+    /// <param name="text">Text to paste</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public static async Task PasteTextAsync(string text, CancellationToken cancellationToken = default)
+    {
+        // Store original clipboard content
+        string? originalClipboard = null;
+        try
+        {
+            originalClipboard = System.Windows.Clipboard.GetText();
+        }
+        catch { }
+
+        try
+        {
+            // Set clipboard to our text
+            System.Windows.Clipboard.SetText(text);
+            
+            // Small delay to ensure clipboard is set
+            await Task.Delay(50, cancellationToken);
+            
+            // Simulate Ctrl+V
+            var controller = new KeyboardController();
+            controller.MinimumKeyPressInterval = TimeSpan.FromMilliseconds(20);
+            
+            PressKey(VirtualKeyCode.CONTROL);
+            await Task.Delay(TimeSpan.FromMilliseconds(20), cancellationToken);
+            PressKey(VirtualKeyCode.VK_V);
+            await Task.Delay(TimeSpan.FromMilliseconds(20), cancellationToken);
+            ReleaseKey(VirtualKeyCode.VK_V);
+            ReleaseKey(VirtualKeyCode.CONTROL);
+        }
+        finally
+        {
+            // Restore original clipboard
+            if (originalClipboard != null)
+            {
+                await Task.Delay(100, cancellationToken);
+                try
+                {
+                    System.Windows.Clipboard.SetText(originalClipboard);
+                }
+                catch { }
+            }
+        }
     }
 }

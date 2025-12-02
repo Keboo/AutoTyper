@@ -58,9 +58,24 @@ public class TypingService
 
         // Type the content using the keyboard controller
         KeyboardController kc = new();
-        if (snippet.FastTyping)
+        
+        // For very large text (>500 chars), use paste for speed
+        if (snippet.FastTyping && contentToType.Length > 500)
         {
-            await kc.TypeStringAsync(contentToType, cancellationToken);
+            await KeyboardController.PasteTextAsync(contentToType, cancellationToken);
+        }
+        else if (snippet.FastTyping)
+        {
+            // Try message-based typing first (fastest)
+            IntPtr foregroundWindow = MessageBasedTyping.GetForegroundWindow();
+            if (foregroundWindow != IntPtr.Zero)
+            {
+                MessageBasedTyping.PostTextCharacters(foregroundWindow, contentToType);
+            }
+            else
+            {
+                await kc.TypeStringAsync(contentToType, cancellationToken);
+            }
         }
         else
         {
