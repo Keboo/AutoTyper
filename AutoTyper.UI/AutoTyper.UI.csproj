@@ -10,6 +10,14 @@
     <StartupObject>AutoTyper.UI.App</StartupObject>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <Version>1.0.5</Version>
+
+    <VelopackPushOnPublish>true</VelopackPushOnPublish>
+    <VelopackPackId>Keboo.AutoTyper</VelopackPackId>
+
+    <!--<_VelopackVpkVersion>0.0.1490-gf94821f</_VelopackVpkVersion>-->
+    <_VelopackVpkNugetSource>D:\Velopack\velopack\build\Release</_VelopackVpkNugetSource>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +33,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Velopack" />
+    <PackageReference Include="Velopack.Build" />
   </ItemGroup>
 
   <ItemGroup>

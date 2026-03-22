@@ -34,6 +34,7 @@
     <PackageVersion Include="System.CommandLine" Version="2.0.9" />
     <PackageVersion Include="TextCopy" Version="6.2.1" />
     <PackageVersion Include="Velopack" Version="1.2.0" />
+    <PackageVersion Include="Velopack.Build" Version="0.0.1541-ge18145c" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -48,7 +48,7 @@ public class SnippetStorageService
         }
     }
 
-    public virtual async Task SaveSnippetsAsync(params IEnumerable<Snippet> snippets)
+    public virtual async Task SaveSnippetsAsync(IEnumerable<Snippet> snippets)
     {
         try
         {
